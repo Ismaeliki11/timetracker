@@ -1,0 +1,5 @@
+{
+  "name": "Time Tracker",
+  "description": "A simple and elegant application to track time spent on various projects and activities. Users can create spaces, log time entries, and view their activity in a calendar format.",
+  "requestFramePermissions": []
+}

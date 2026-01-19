@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rastreador de Tiempo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/light/favicon-32x32.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="32x32" href="/dark/favicon-32x32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="48x48" href="/light/favicon-48x48.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="48x48" href="/dark/favicon-48x48.png" media="(prefers-color-scheme: dark)">
+  <link rel="shortcut icon" href="/light/favicon.ico" media="(prefers-color-scheme: light)">
+  <link rel="shortcut icon" href="/dark/favicon.ico" media="(prefers-color-scheme: dark)">
+
+  <!-- Apple Touch Icon (Defaults to Light, as iOS doesn't support dynamic apple-touch-icon well) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/light/apple-touch-icon.png">
+
+  <!-- Manifest -->
+  <link rel="manifest" href="/site.webmanifest">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+          },
+          colors: {
+            primary: "#137fec",
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+            lg: "0.75rem",
+            xl: "1rem",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      overscroll-behavior-y: none;
+      /* Prevent pull-to-refresh on mobile which can feel glitchy in apps */
+      touch-action: manipulation;
+      /* Improves touch response by disabling double-tap zoom */
+      margin: 0;
+      padding: 0;
+      background-color: transparent;
+    }
+
+    /* This enables momentum-based scrolling on iOS. */
+    .scrollable-content {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #professional-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-color: #f0f2f5;
+      /* Lighter base for light mode */
+      background-image: radial-gradient(circle at top left, #ffffff, #e9ecef);
+      transition: background 0.5s ease;
+    }
+
+    .dark #professional-bg {
+      background-color: #121212;
+      /* Deeper black for dark mode */
+      background-image: radial-gradient(circle at top left, #1a1a1a, #000000);
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+    }
+
+    /* Custom Scrollbar Styles */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* --- HYBRID UI STYLES --- */
+
+    /* Light Mode: Solid & Professional */
+    .glass-pane {
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-interactive {
+      background-color: #f3f4f6;
+      border: 1px solid transparent;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .glass-interactive:hover {
+      background-color: #e5e7eb;
+      transform: translateY(-1px);
+    }
+
+    /* Dark Mode: Liquid Glass Effect */
+    .dark .glass-pane {
+      background-color: rgba(31, 33, 37, 0.75);
+      /* #1f2125 with alpha */
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .dark .glass-interactive {
+      background-color: rgba(42, 45, 49, 0.7);
+      /* #2a2d31 with alpha */
+      border: 1px solid transparent;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .dark .glass-interactive:hover {
+      background-color: rgba(55, 58, 64, 0.8);
+      /* #373a40 with alpha */
+      transform: translateY(-1px);
+    }
+
+    /* --- iOS/Mobile Input Fixes --- */
+    input[type="time"],
+    input[type="date"] {
+      -webkit-appearance: none;
+      appearance: none;
+      min-height: 3.5rem;
+      /* Ensure correct height */
+      background-color: #f1f5f9;
+      /* Match slate-100 */
+      color: #0f172a;
+      border-radius: 0.5rem;
+      padding: 0 1rem;
+    }
+
+    .dark input[type="time"],
+    .dark input[type="date"] {
+      background-color: #1e293b;
+      /* Match slate-800 */
+      color: #f8fafc;
+      color-scheme: dark;
+      /* Forces native picker to be dark */
+    }
+
+    /* Align text centered or left as needed */
+    input[type="time"] {
+      text-align: center;
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <div id="professional-bg"></div>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
