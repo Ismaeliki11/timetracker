@@ -8,10 +8,12 @@ import { Modal } from './Modals';
 interface MigrationModalProps {
     spaces: Space[];
     timeEntries: TimeEntry[];
+    setSpaces?: React.Dispatch<React.SetStateAction<Space[]>>;
+    setTimeEntries?: React.Dispatch<React.SetStateAction<TimeEntry[]>>;
     onClose: () => void;
 }
 
-const MigrationModal: React.FC<MigrationModalProps> = ({ spaces, timeEntries, onClose }) => {
+const MigrationModal: React.FC<MigrationModalProps> = ({ spaces, timeEntries, setSpaces, setTimeEntries, onClose }) => {
     const { t } = useLocalization();
     const { user } = useAuth();
     const [selectedSpaceIds, setSelectedSpaceIds] = useState<Set<string>>(new Set());
@@ -71,26 +73,64 @@ const MigrationModal: React.FC<MigrationModalProps> = ({ spaces, timeEntries, on
                 setImporting(true);
                 let count = 0;
 
-                // Process
-                for (const s of json.spaces) {
-                    const newId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
-                    const oldId = s.id;
-
-                    await dataService.createSpace({ ...s, id: newId });
-
-                    const relatedEntries = json.timeEntries?.filter((te: any) => te.spaceId === oldId) || [];
-                    for (const te of relatedEntries) {
-                        await dataService.createTimeEntry({
-                            ...te,
-                            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                            spaceId: newId
-                        });
+                if (!user) {
+                    // --- GUEST / LOCAL RESTORE ---
+                    if (!setSpaces || !setTimeEntries) {
+                        throw new Error("Internal Error: State setters missing for guest import");
                     }
-                    count++;
-                }
 
-                setMessage({ type: 'success', text: `Imported ${count} spaces.` });
-                setTimeout(() => window.location.reload(), 1500);
+                    // Merge strategy: Overwrite or Append? 
+                    // Usually "Restore" implies bringing back lost data. 
+                    // Let's Append if ID doesn't exist, Update if it does?
+                    // Safe bet for now: Merge arrays, remove duplicates by ID.
+
+                    const newSpaces = [...json.spaces];
+                    const newEntries = json.timeEntries || [];
+
+                    // We need to merge with EXISTING current state to avoid wiping current work if any?
+                    // Actually, the user goal is likely "Restore my backup". 
+                    // But safe merging is better.
+
+                    setSpaces(prev => {
+                        const m = new Map(prev.map(i => [i.id, i]));
+                        newSpaces.forEach((i: Space) => m.set(i.id, i));
+                        return Array.from(m.values());
+                    });
+
+                    setTimeEntries(prev => {
+                        const m = new Map(prev.map(i => [i.id, i]));
+                        newEntries.forEach((i: TimeEntry) => m.set(i.id, i));
+                        return Array.from(m.values());
+                    });
+
+                    count = newSpaces.length;
+                    setMessage({ type: 'success', text: `Restored ${count} spaces locally.` });
+                    // No reload needed really if React state updates, but 'useLocalStorage' might need a tick.
+                    // Reload ensures fresh start.
+                    setTimeout(() => window.location.reload(), 1000);
+
+                } else {
+                    // --- CLOUD SYNC IMPORT ---
+                    // Process
+                    for (const s of json.spaces) {
+                        const newId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
+                        const oldId = s.id;
+
+                        await dataService.createSpace({ ...s, id: newId });
+
+                        const relatedEntries = json.timeEntries?.filter((te: any) => te.spaceId === oldId) || [];
+                        for (const te of relatedEntries) {
+                            await dataService.createTimeEntry({
+                                ...te,
+                                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                                spaceId: newId
+                            });
+                        }
+                        count++;
+                    }
+                    setMessage({ type: 'success', text: `Imported ${count} spaces to Cloud.` });
+                    setTimeout(() => window.location.reload(), 1500);
+                }
             } catch (err: any) {
                 setMessage({ type: 'error', text: "Import Error: " + err.message });
                 setImporting(false);

@@ -409,6 +409,8 @@ const MainLayoutWithModals = ({ spaces, setSpaces, timeEntries, setTimeEntries, 
         <MigrationModal
           spaces={spaces}
           timeEntries={timeEntries}
+          setSpaces={setSpaces}
+          setTimeEntries={setTimeEntries}
           onClose={() => openModal('profile')} // Back to profile or close? User said "separate panel". Back makes sense flow-wise.
         />
       )}
