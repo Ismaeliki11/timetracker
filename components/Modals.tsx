@@ -10,7 +10,7 @@ interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({ onClose, children }) => (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
         <style>{`
             @keyframes fade-in {
                 from { opacity: 0; transform: scale(0.95); }
@@ -18,7 +18,7 @@ export const Modal: React.FC<ModalProps> = ({ onClose, children }) => (
             }
             .animate-fade-in { animation: fade-in 0.2s ease-out; }
         `}</style>
-        <div className="relative w-full max-w-md glass-pane rounded-xl shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+        <div className="relative w-full max-w-md glass-pane rounded-2xl shadow-2xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             {children}
         </div>
     </div>
@@ -162,7 +162,14 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
             setDescription(entryToEdit.description);
             setIcon(entryToEdit.icon);
             setTags(entryToEdit.tags || []);
-            setMode('duration');
+
+            if (entryToEdit.startTime && entryToEdit.endTime) {
+                setStartTime(entryToEdit.startTime);
+                setEndTime(entryToEdit.endTime);
+                setMode('range');
+            } else {
+                setMode('duration');
+            }
         }
     }, [entryToEdit]);
 
@@ -221,7 +228,12 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
 
     const handleSave = () => {
         if (duration > 0) {
-            onSave({ duration, description, icon, tags }, entryToEdit?.id);
+            const entryData: any = { duration, description, icon, tags };
+            if (mode === 'range') {
+                entryData.startTime = startTime;
+                entryData.endTime = endTime;
+            }
+            onSave(entryData, entryToEdit?.id);
         }
     };
 
@@ -229,14 +241,14 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
 
     return (
         <Modal onClose={onClose}>
-            <div className="flex items-center p-4 justify-between border-b border-slate-200 dark:border-slate-700">
+            <div className="flex items-center p-4 justify-between border-b border-slate-200/50 dark:border-slate-700/50">
                 <span className="material-symbols-outlined text-gray-500 dark:text-gray-400 w-12 text-left">calendar_today</span>
                 <h2 className="text-lg font-bold text-black dark:text-gray-100 flex-1 text-center">{entryToEdit ? t('edit_entry') : t('log_time')}</h2>
                 <button onClick={onClose} className="flex items-center justify-center w-12 h-12 -mr-4 text-slate-900 dark:text-gray-200" aria-label={t('close')}>
                     <span className="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <div className="p-4 max-h-[60vh] overflow-y-auto scrollable-content" onClick={() => setShowSuggestions(false)}>
+            <div className="p-4 max-h-[70vh] overflow-y-auto scrollable-content bg-transparent" onClick={() => setShowSuggestions(false)}>
                 <p className="text-base font-medium text-slate-900 dark:text-gray-200 pb-2">{formattedDate}</p>
 
                 {/* Tags Section */}
@@ -363,6 +375,8 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
 // --- Details Modal ---
 interface DetailsModalProps {
     entry: TimeEntry;
+    spaceColor?: string;
+    spaceName?: string;
     onClose: () => void;
 }
 
@@ -376,49 +390,103 @@ const formatDurationFromHours = (hours: number): string => {
     return `${h}:${String(m).padStart(2, '0')}`;
 };
 
-export const DetailsModal: React.FC<DetailsModalProps> = ({ entry, onClose }) => {
+export const DetailsModal: React.FC<DetailsModalProps> = ({ entry, spaceColor = 'bg-primary', spaceName = '', onClose }) => {
     const { t, locale } = useLocalization();
     const formattedDate = new Date(entry.date + 'T12:00:00').toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' });
 
+    // Definitive detection: check all possible markers
+    const isPomodoro = entry.source?.toLowerCase().includes('pomodoro') ||
+        entry.app?.toLowerCase().includes('pomodoro') ||
+        entry.tags?.some(tag => tag.toLowerCase().includes('pomodoro')) ||
+        entry.description?.toLowerCase().includes('pomodoro') ||
+        spaceName.toLowerCase().includes('pomodoro') ||
+        entry.icon === 'timer';
+
     return (
         <Modal onClose={onClose}>
-            <div className="flex items-center p-4 justify-between border-b border-slate-200 dark:border-slate-700">
-                <span className="material-symbols-outlined text-gray-500 dark:text-gray-400 w-12 text-left">{entry.icon || 'description'}</span>
-                <h2 className="text-lg font-bold text-black dark:text-gray-100 flex-1 text-center">{t('entry_details')}</h2>
-                <button onClick={onClose} className="flex items-center justify-center w-12 h-12 -mr-4 text-slate-900 dark:text-gray-200" aria-label={t('close')}>
-                    <span className="material-symbols-outlined">close</span>
+            {/* Header - Space Color */}
+            <div className={`h-24 w-full ${spaceColor} relative flex items-center justify-center`}>
+                <div className="absolute inset-0 bg-black/10"></div>
+                <div className="relative z-10">
+                    <div className="size-14 rounded-2xl bg-white/90 dark:bg-slate-800/90 shadow-xl flex items-center justify-center backdrop-blur-md">
+                        <span className="material-symbols-outlined text-slate-800 dark:text-white text-3xl">{entry.icon || 'description'}</span>
+                    </div>
+                </div>
+                <button onClick={onClose} className="absolute top-4 right-4 size-10 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center text-white transition-colors backdrop-blur-md">
+                    <span className="material-symbols-outlined text-xl">close</span>
                 </button>
             </div>
-            <div className="p-6 space-y-4">
-                <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-gray-400">{t('date')}</p>
-                    <p className="text-base text-black dark:text-gray-200">{formattedDate}</p>
+
+            {/* Content Area - Transparent / Glass */}
+            <div className="p-6 flex flex-col gap-6 bg-transparent">
+                <div className="text-center">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white capitalize leading-tight">{formattedDate}</h2>
+                    <p className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mt-1 opacity-60">{t('entry_details')}</p>
                 </div>
+
+                {/* Duration and Range - Integrated Glass Cards */}
+                <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/5 backdrop-blur-md">
+                        <span className="material-symbols-outlined text-primary mb-1 text-xl">timer</span>
+                        <span className="text-2xl font-black text-slate-900 dark:text-white">{formatDurationFromHours(entry.duration)}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{t('duration')}</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/5 backdrop-blur-md">
+                        <span className="material-symbols-outlined text-primary mb-1 text-xl">history</span>
+                        <span className="text-sm font-black text-slate-900 dark:text-white">
+                            {entry.startTime && entry.endTime ? `${entry.startTime} - ${entry.endTime}` : '-- : --'}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{t('time_range')}</span>
+                    </div>
+                </div>
+
+                {/* Tags */}
                 {entry.tags && entry.tags.length > 0 && (
-                    <div>
-                        <p className="text-sm font-medium text-slate-500 dark:text-gray-400">{t('tags')}</p>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                            {entry.tags.map(tag => (
-                                <span key={tag} className="px-2 py-1 bg-primary/10 text-primary rounded-md text-sm font-medium border border-primary/20">
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                        {entry.tags.map(tag => (
+                            <span key={tag} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-black border border-primary/20 backdrop-blur-md uppercase tracking-wider">
+                                {tag}
+                            </span>
+                        ))}
                     </div>
                 )}
-                <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-gray-400">{t('duration')}</p>
-                    <p className="text-base text-black dark:text-gray-200">{formatDurationFromHours(entry.duration)}</p>
-                </div>
-                <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-gray-400">{t('description')}</p>
-                    <p className="text-base text-black dark:text-gray-200 whitespace-pre-wrap break-words max-h-48 overflow-y-auto scrollable-content">
+
+                {/* Pomodoro Link - Simple and Integrated */}
+                {isPomodoro && (
+                    <div className="flex flex-col gap-2">
+                        <a
+                            href="https://pomodoro-ismaeliki.vercel.app"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 hover:bg-orange-500/20 transition-all backdrop-blur-md group"
+                        >
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-orange-500">timer</span>
+                                <span className="text-orange-700 dark:text-orange-400 text-sm font-bold">Importado de Pomodoro App</span>
+                            </div>
+                            <span className="material-symbols-outlined text-orange-500 text-sm group-hover:translate-x-1 transition-transform">open_in_new</span>
+                        </a>
+                    </div>
+                )}
+
+                {/* Description */}
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-slate-400 text-sm">notes</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t('description')}</span>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/10 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap italic border border-white/20 dark:border-white/5 min-h-[80px] backdrop-blur-md">
                         {entry.description || t('no_description_provided')}
-                    </p>
+                    </div>
                 </div>
-            </div>
-            <div className="flex items-center justify-end gap-4 p-4 mt-2 border-t border-slate-200 dark:border-slate-700">
-                <button onClick={onClose} className="flex items-center justify-center rounded-lg h-12 px-6 bg-slate-200 dark:bg-slate-700 font-bold text-black dark:text-white hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">{t('close')}</button>
+
+                {/* Close Success */}
+                <button
+                    onClick={onClose}
+                    className="w-full h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-lg backdrop-blur-md mt-2"
+                >
+                    {t('close')}
+                </button>
             </div>
         </Modal>
     );

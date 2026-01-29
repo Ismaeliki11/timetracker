@@ -11,9 +11,13 @@ const mapEntryFromDB = (dbEntry: any): TimeEntry => ({
     spaceId: dbEntry.space_id,
     date: dbEntry.date,
     duration: Number(dbEntry.duration), // 'duration' is numeric in DB
+    startTime: dbEntry.start_time,
+    endTime: dbEntry.end_time,
     description: dbEntry.description || '',
     tags: dbEntry.tags || [],
-    icon: dbEntry.icon
+    icon: dbEntry.icon,
+    source: dbEntry.source,
+    app: dbEntry.app
 });
 
 // Map App Entry to DB Entry
@@ -23,9 +27,13 @@ const mapEntryToDB = (entry: Omit<TimeEntry, 'id'> & { id?: string }, userId: st
     space_id: entry.spaceId,
     date: entry.date,
     duration: entry.duration,
+    start_time: entry.startTime,
+    end_time: entry.endTime,
     description: entry.description,
     tags: entry.tags,
-    icon: entry.icon
+    icon: entry.icon,
+    source: entry.source,
+    app: entry.app
 });
 
 // Map DB Space to App Space
@@ -147,9 +155,13 @@ export const dataService = {
         if (updates.spaceId) dbUpdates.space_id = updates.spaceId;
         if (updates.date) dbUpdates.date = updates.date;
         if (updates.duration !== undefined) dbUpdates.duration = updates.duration;
+        if (updates.startTime !== undefined) dbUpdates.start_time = updates.startTime;
+        if (updates.endTime !== undefined) dbUpdates.end_time = updates.endTime;
         if (updates.description !== undefined) dbUpdates.description = updates.description;
         if (updates.tags) dbUpdates.tags = updates.tags;
         if (updates.icon) dbUpdates.icon = updates.icon;
+        if (updates.source) dbUpdates.source = updates.source;
+        if (updates.app) dbUpdates.app = updates.app;
 
         const { data, error } = await supabase
             .from('time_entries')

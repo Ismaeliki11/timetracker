@@ -396,6 +396,8 @@ const MainLayoutWithModals = ({ spaces, setSpaces, timeEntries, setTimeEntries, 
       {modal === 'details' && viewingEntry && (
         <DetailsModal
           entry={viewingEntry}
+          spaceColor={spaces.find((s: Space) => s.id === viewingEntry.spaceId)?.color}
+          spaceName={spaces.find((s: Space) => s.id === viewingEntry.spaceId)?.name}
           onClose={closeModal}
         />
       )}
