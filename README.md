@@ -37,7 +37,7 @@ A sophisticated, cross-platform time tracking application built for productivity
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/timetracker.git
+    git clone https://github.com/Ismaeliki11/timetracker.git
     cd timetracker
     ```
 
@@ -71,10 +71,16 @@ add column is_ongoing boolean default false;
 
 The application is fully responsive and optimized for mobile devices, functioning as a Progressive Web App (PWA) capability for installation on home screens.
 
-## 🤝 Contributing
+## 👨‍💻 About the Author
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+This application was crafted by **Ismael** as a personal portfolio project, driven by a genuine passion for building high-quality, useful software.
+
+*   **For the Love of Art**: This project was created "por amor al arte" (for the love of art), focusing purely on user experience and technical craftsmanship rather than monetization.
+*   **No Ads, No Fees**: This tool is completely free to use. There are no advertisements, no tracking, and no hidden costs.
+*   **Open & Educational**: The source code is available for anyone to learn from, showcasing modern React patterns and real-time synchronization strategies.
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is open-sourced under the **MIT License**.
+
+This means you are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software. A key benefit of the MIT License is that it allows users to do almost anything they want with the project, provided they include the original copyright and license notice in any copy of the software/source. It is a permissive license that is short and to the point.
