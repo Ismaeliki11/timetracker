@@ -81,6 +81,8 @@ This application was crafted by **Ismael** as a personal portfolio project, driv
 
 ## 📄 License
 
-This project is open-sourced under the **MIT License**.
+This project is shared under a **Non-Commercial License**.
 
-This means you are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software. A key benefit of the MIT License is that it allows users to do almost anything they want with the project, provided they include the original copyright and license notice in any copy of the software/source. It is a permissive license that is short and to the point.
+You are free to **use**, **modify**, and **distribute** this software for personal or educational purposes. I encourage you to learn from it, improve it, and share it with others.
+
+**However, you may NOT use this software for commercial purposes or sell copies of it.** This project was born from good intentions and is meant to remain a free resource for the community forever.
