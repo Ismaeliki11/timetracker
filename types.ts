@@ -17,6 +17,7 @@ export interface TimeEntry {
   icon?: string; // e.g. 'code'
   source?: string; // e.g. 'pomodoro'
   app?: string; // Alternative identifier
+  isOngoing?: boolean;
 }
 
 export type View = 'loading' | 'welcome' | 'spaces' | 'calendar' | 'statistics';

@@ -17,7 +17,8 @@ const mapEntryFromDB = (dbEntry: any): TimeEntry => ({
     tags: dbEntry.tags || [],
     icon: dbEntry.icon,
     source: dbEntry.source,
-    app: dbEntry.app
+    app: dbEntry.app,
+    isOngoing: dbEntry.is_ongoing
 });
 
 // Map App Entry to DB Entry
@@ -33,7 +34,8 @@ const mapEntryToDB = (entry: Omit<TimeEntry, 'id'> & { id?: string }, userId: st
     tags: entry.tags,
     icon: entry.icon,
     source: entry.source,
-    app: entry.app
+    app: entry.app,
+    is_ongoing: entry.isOngoing
 });
 
 // Map DB Space to App Space
@@ -162,6 +164,7 @@ export const dataService = {
         if (updates.icon) dbUpdates.icon = updates.icon;
         if (updates.source) dbUpdates.source = updates.source;
         if (updates.app) dbUpdates.app = updates.app;
+        if (updates.isOngoing !== undefined) dbUpdates.is_ongoing = updates.isOngoing;
 
         const { data, error } = await supabase
             .from('time_entries')

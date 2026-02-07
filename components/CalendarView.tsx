@@ -181,7 +181,19 @@ const TimeEntryItem: React.FC<TimeEntryItemProps> = ({ entry, onEdit, onDelete, 
                 </div>
             </div>
             <div className="shrink-0 flex items-center">
-                <p className="text-base font-normal mr-2 text-black dark:text-white">{formatDurationFromHours(entry.duration)}</p>
+                <div className="text-right">
+                    {entry.isOngoing ? (
+                        <div className="flex flex-col items-end">
+                            <span className="text-[10px] font-bold text-primary uppercase tracking-wider animate-pulse flex items-center gap-1">
+                                <span className="size-1.5 rounded-full bg-primary"></span>
+                                {t('ongoing')}
+                            </span>
+                            <p className="text-base font-bold text-black dark:text-white leading-tight">{entry.startTime} - ...</p>
+                        </div>
+                    ) : (
+                        <p className="text-base font-normal text-black dark:text-white">{formatDurationFromHours(entry.duration)}</p>
+                    )}
+                </div>
                 <div className="relative" ref={menuRef}>
                     <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 rounded-full glass-interactive" aria-label={t('options')}>
                         <span className="material-symbols-outlined text-slate-700 dark:text-slate-300 text-lg">more_vert</span>

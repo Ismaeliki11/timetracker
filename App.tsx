@@ -10,6 +10,7 @@ import FinancialCalculatorModal from './components/FinancialCalculatorModal';
 import CalendarView from './components/CalendarView';
 import StatisticsView from './components/StatisticsView';
 import { formatDateToYMD } from './utils/formatters';
+import { generateUUID } from './utils/uuid';
 import { Header, InfoPanel } from './components/Header';
 import { ProtectedRoute } from './components/ProtectedRoute'; // Kept for reference or specific protected routes if needed later
 
@@ -219,7 +220,7 @@ const MainLayoutWithModals = ({ spaces, setSpaces, timeEntries, setTimeEntries, 
 
   // -- Handler Implementations --
   const handleSaveSpace = async (data: any, id?: string) => {
-    const newSpace = id ? { ...data, id } : { ...data, id: crypto.randomUUID() };
+    const newSpace = id ? { ...data, id } : { ...data, id: generateUUID() };
 
     // Optimistic Update
     if (id) {
@@ -278,7 +279,7 @@ const MainLayoutWithModals = ({ spaces, setSpaces, timeEntries, setTimeEntries, 
       if (currentPathSpaceId) {
         newEntry = {
           ...data,
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           spaceId: currentPathSpaceId,
           date: formatDateToYMD(logDate)
         };
@@ -324,7 +325,37 @@ const MainLayoutWithModals = ({ spaces, setSpaces, timeEntries, setTimeEntries, 
         setConfirmState(prev => ({ ...prev, isOpen: false }));
       }
     });
-  }
+  };
+
+  const handleFinishEntry = async (entry: TimeEntry) => {
+    const now = new Date();
+    const end = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    const startD = new Date(`1970-01-01T${entry.startTime}:00`);
+    const endD = new Date(`1970-01-01T${end}:00`);
+    let finalDuration = 0;
+    if (endD > startD) {
+      finalDuration = (endD.getTime() - startD.getTime()) / (1000 * 60 * 60);
+    }
+
+    const updatedEntry = {
+      ...entry,
+      endTime: end,
+      duration: finalDuration || 0.01,
+      isOngoing: false
+    };
+
+    setTimeEntries(timeEntries.map((e: TimeEntry) => e.id === entry.id ? updatedEntry : e));
+
+    if (user) {
+      try {
+        await dataService.updateTimeEntry(entry.id, updatedEntry);
+      } catch (err) {
+        console.error(err);
+        notify(t('error_save_failed'), 'error');
+      }
+    }
+  };
 
   // Sync View Logic
   useEffect(() => {
@@ -360,6 +391,7 @@ const MainLayoutWithModals = ({ spaces, setSpaces, timeEntries, setTimeEntries, 
               onCreateSpace={() => { setEditingSpace(null); openModal('createSpace'); }}
               onEditSpace={(s) => { setEditingSpace(s); openModal('createSpace'); }}
               onDeleteSpace={handleDeleteSpace}
+              onViewEntryDetails={(e) => { openModal('details', { entryId: e.id }); }}
             />
           } />
           <Route path="/space/:spaceId" element={
@@ -399,6 +431,7 @@ const MainLayoutWithModals = ({ spaces, setSpaces, timeEntries, setTimeEntries, 
           spaceColor={spaces.find((s: Space) => s.id === viewingEntry.spaceId)?.color}
           spaceName={spaces.find((s: Space) => s.id === viewingEntry.spaceId)?.name}
           onClose={closeModal}
+          onFinish={handleFinishEntry}
         />
       )}
       {modal === 'profile' && (

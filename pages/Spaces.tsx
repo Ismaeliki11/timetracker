@@ -22,10 +22,11 @@ interface SpacesScreenProps {
     onCreateSpace: () => void;
     onEditSpace: (space: Space) => void;
     onDeleteSpace: (id: string, name: string) => void;
+    onViewEntryDetails: (entry: TimeEntry) => void;
 }
 
 
-const Spaces: React.FC<SpacesScreenProps> = ({ spaces, timeEntries, onSelectSpace, onCreateSpace, onEditSpace, onDeleteSpace }) => {
+const Spaces: React.FC<SpacesScreenProps> = ({ spaces, timeEntries, onSelectSpace, onCreateSpace, onEditSpace, onDeleteSpace, onViewEntryDetails }) => {
     const { t } = useLocalization();
     const { user } = useAuth();
 
@@ -51,11 +52,72 @@ const Spaces: React.FC<SpacesScreenProps> = ({ spaces, timeEntries, onSelectSpac
         });
         return totals;
     }, [spaces, timeEntries]);
+    const ongoingEntries = useMemo(() => {
+        return timeEntries.filter(entry => entry.isOngoing);
+    }, [timeEntries]);
+
+    const [now, setNow] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => setNow(new Date()), 60000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const calculateElapsed = (startTime: string, entryDate: string) => {
+        if (!startTime || !entryDate) return "0:00";
+        try {
+            const [h, m] = startTime.split(':').map(Number);
+            const start = new Date(`${entryDate}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
+
+            if (isNaN(start.getTime()) || start > now) return "0:00";
+
+            const diffMs = now.getTime() - start.getTime();
+            const diffHrs = diffMs / (1000 * 60 * 60);
+            return formatDurationFromHours(diffHrs);
+        } catch {
+            return "0:00";
+        }
+    };
 
     return (
         <main className="flex-1 px-4 pt-4">
             <h1 className="tracking-tight text-3xl font-bold pt-6 pb-2 text-black dark:text-white">{welcomeMessage}</h1>
             <p className="text-slate-600 dark:text-gray-300 text-base font-normal pb-3 pt-1">{t('select_space_prompt')}</p>
+
+            {ongoingEntries.length > 0 && (
+                <div className="flex flex-col gap-3 mb-6 mt-4">
+                    <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">{t('ongoing')}</h5>
+                    {ongoingEntries.map(entry => {
+                        const spaceForEntry = spaces.find(s => s.id === entry.spaceId);
+                        return (
+                            <div
+                                key={entry.id}
+                                onClick={() => onViewEntryDetails(entry)}
+                                className="relative overflow-hidden rounded-2xl border border-primary/20 bg-primary/5 p-4 flex items-center justify-between group cursor-pointer"
+                            >
+                                <div className="absolute top-0 left-0 w-1 h-full bg-primary animate-pulse"></div>
+                                <div className="flex items-center gap-4 flex-1 min-w-0">
+                                    <div className={`size-12 rounded-xl ${spaceForEntry?.color || 'bg-slate-200'} flex items-center justify-center shadow-lg relative`}>
+                                        <span className="material-symbols-outlined text-white">{spaceForEntry?.icon || 'timer'}</span>
+                                        <span className="absolute -top-1 -right-1 size-3 bg-primary rounded-full border-2 border-white dark:border-slate-900 animate-ping"></span>
+                                    </div>
+                                    <div className="flex flex-col flex-1 min-w-0">
+                                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                                            {spaceForEntry?.name || entry.description || t('untitled_space')}
+                                        </p>
+                                        <p className="text-[11px] font-medium text-primary uppercase tracking-wider flex items-center gap-1">
+                                            {entry.startTime} - {t('ongoing')}
+                                            <span className="opacity-50">·</span>
+                                            <span className="font-black">{calculateElapsed(entry.startTime || '', entry.date)}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <span className="material-symbols-outlined text-primary text-xl opacity-50 group-hover:opacity-100 transition-opacity">arrow_forward_ios</span>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
             <div className="grid grid-cols-1 gap-3 pt-6">
                 {spaces.map(space => (
                     <SpaceItem

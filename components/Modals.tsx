@@ -141,12 +141,13 @@ interface LogTimeModalProps {
 
 export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSave, entryToEdit, availableTags = [] }) => {
     const { t, locale } = useLocalization();
-    const [mode, setMode] = useState<'duration' | 'range'>('duration');
+    const [mode, setMode] = useState<'duration' | 'range' | 'checkin'>('duration');
     const [durationStr, setDurationStr] = useState('');
     const [startTime, setStartTime] = useState('09:00');
     const [endTime, setEndTime] = useState('10:30');
     const [description, setDescription] = useState('');
     const [icon, setIcon] = useState<string | undefined>(undefined);
+    const [isOngoing, setIsOngoing] = useState(false);
 
     // Tags State
     const [tags, setTags] = useState<string[]>([]);
@@ -162,14 +163,22 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
             setDescription(entryToEdit.description);
             setIcon(entryToEdit.icon);
             setTags(entryToEdit.tags || []);
+            setIsOngoing(entryToEdit.isOngoing || false);
 
-            if (entryToEdit.startTime && entryToEdit.endTime) {
+            if (entryToEdit.isOngoing) {
+                setStartTime(entryToEdit.startTime || '09:00');
+                setMode('checkin');
+            } else if (entryToEdit.startTime && entryToEdit.endTime) {
                 setStartTime(entryToEdit.startTime);
                 setEndTime(entryToEdit.endTime);
                 setMode('range');
             } else {
                 setMode('duration');
             }
+        } else {
+            // New entry: set default start time to current time for checkin mode
+            const now = new Date();
+            setStartTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
         }
     }, [entryToEdit]);
 
@@ -181,7 +190,6 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
             setShowSuggestions(true);
         } else {
             setFilteredTags(remainingTags);
-            // Don't auto-hide here, let onBlur or selection handle it
         }
     }, [tagInput, availableTags, tags]);
 
@@ -213,7 +221,7 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
             }
             const val = parseFloat(durationStr);
             return isNaN(val) ? 0 : val;
-        } else { // Time Range
+        } else if (mode === 'range') {
             try {
                 const start = new Date(`1970-01-01T${startTime}:00`);
                 const end = new Date(`1970-01-01T${endTime}:00`);
@@ -223,18 +231,67 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
             } catch {
                 return 0;
             }
+        } else { // checkin
+            if (isOngoing) return 0.001; // Marker value for ongoing entries
+            return 0;
         }
-    }, [mode, durationStr, startTime, endTime]);
+    }, [mode, durationStr, startTime, endTime, isOngoing]);
 
     const handleSave = () => {
-        if (duration > 0) {
+        if (duration > 0 || mode === 'checkin') {
             const entryData: any = { duration, description, icon, tags };
             if (mode === 'range') {
                 entryData.startTime = startTime;
                 entryData.endTime = endTime;
+            } else if (mode === 'checkin') {
+                entryData.startTime = startTime;
+                entryData.isOngoing = isOngoing;
+                if (!isOngoing) {
+                    // If we just finished, calculate final duration
+                    const now = new Date();
+                    const end = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                    entryData.endTime = end;
+                    entryData.isOngoing = false;
+
+                    const startD = new Date(`1970-01-01T${startTime}:00`);
+                    const endD = new Date(`1970-01-01T${end}:00`);
+                    if (endD > startD) {
+                        entryData.duration = (endD.getTime() - startD.getTime()) / (1000 * 60 * 60);
+                    } else {
+                        entryData.duration = 0.01; // Minimum
+                    }
+                } else {
+                    entryData.duration = 0; // It's still running
+                }
             }
             onSave(entryData, entryToEdit?.id);
         }
+    };
+
+    const handleFinish = () => {
+        setIsOngoing(false);
+        // After setting isOngoing to false, the next handleSave call will finalize it.
+        // But we can trigger handleSave directly with the new state.
+
+        const now = new Date();
+        const end = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        const startD = new Date(`1970-01-01T${startTime}:00`);
+        const endD = new Date(`1970-01-01T${end}:00`);
+        let finalDuration = 0;
+        if (endD > startD) {
+            finalDuration = (endD.getTime() - startD.getTime()) / (1000 * 60 * 60);
+        }
+
+        onSave({
+            duration: finalDuration || 0.01,
+            description,
+            icon,
+            tags,
+            startTime,
+            endTime: end,
+            isOngoing: false
+        }, entryToEdit?.id);
     };
 
     const formattedDate = date.toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' });
@@ -288,7 +345,6 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
                                 {t('add_tag')}
                             </button>
                         </div>
-                        {/* Auto-complete dropdown */}
                         {showSuggestions && filteredTags.length > 0 && (
                             <div className="absolute top-full left-0 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl max-h-40 overflow-y-auto scrollable-content z-50">
                                 {filteredTags.map(tag => (
@@ -309,11 +365,12 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
                 </div>
 
                 <div className="flex justify-center p-1 rounded-lg bg-slate-100 dark:bg-slate-800 my-2">
-                    <button onClick={() => setMode('duration')} className={`px-4 py-1.5 rounded-md text-sm font-medium flex-1 transition-all ${mode === 'duration' ? 'bg-white dark:bg-slate-700 shadow' : 'text-slate-700 dark:text-slate-200'}`}>{t('duration')}</button>
-                    <button onClick={() => setMode('range')} className={`px-4 py-1.5 rounded-md text-sm font-medium flex-1 transition-all ${mode === 'range' ? 'bg-white dark:bg-slate-700 shadow' : 'text-slate-700 dark:text-slate-200'}`}>{t('time_range')}</button>
+                    <button onClick={() => setMode('duration')} className={`px-2 py-1.5 rounded-md text-[13px] font-medium flex-1 transition-all ${mode === 'duration' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>{t('duration')}</button>
+                    <button onClick={() => setMode('range')} className={`px-2 py-1.5 rounded-md text-[13px] font-medium flex-1 transition-all ${mode === 'range' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>{t('time_range')}</button>
+                    <button onClick={() => { setMode('checkin'); setIsOngoing(true); }} className={`px-2 py-1.5 rounded-md text-[13px] font-medium flex-1 transition-all ${mode === 'checkin' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>{t('check_in')}/{t('check_out')}</button>
                 </div>
 
-                {mode === 'duration' ? (
+                {mode === 'duration' && (
                     <label className="flex flex-col w-full my-4">
                         <p className="text-sm font-medium pb-2 text-slate-800 dark:text-gray-300">{t('duration')}</p>
                         <input
@@ -328,7 +385,9 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
                             }}
                         />
                     </label>
-                ) : (
+                )}
+
+                {mode === 'range' && (
                     <div className="flex gap-4 my-4">
                         <label className="flex flex-col w-full">
                             <p className="text-sm font-medium pb-2 text-slate-800 dark:text-gray-300">{t('start_time')}</p>
@@ -338,6 +397,40 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
                             <p className="text-sm font-medium pb-2 text-slate-800 dark:text-gray-300">{t('end_time')}</p>
                             <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="form-input flex w-full rounded-lg border bg-slate-100 p-4 h-14 text-base border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white" />
                         </label>
+                    </div>
+                )}
+
+                {mode === 'checkin' && (
+                    <div className="flex flex-col gap-4 my-4">
+                        <label className="flex flex-col w-full">
+                            <p className="text-sm font-medium pb-2 text-slate-800 dark:text-gray-300">{t('start_time')}</p>
+                            <div className="flex gap-2">
+                                <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="form-input flex-1 rounded-lg border bg-slate-100 p-4 h-14 text-base border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white" />
+                                <button
+                                    onClick={() => {
+                                        const now = new Date();
+                                        setStartTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
+                                    }}
+                                    className="px-4 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200"
+                                >
+                                    <span className="material-symbols-outlined">schedule</span>
+                                </button>
+                            </div>
+                        </label>
+                        {isOngoing && entryToEdit && (
+                            <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 flex flex-col items-center gap-2">
+                                <p className="text-sm font-bold text-primary animate-pulse">{t('tracked')}...</p>
+                                <button onClick={handleFinish} className="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                                    <span className="material-symbols-outlined">stop_circle</span>
+                                    {t('finish')}
+                                </button>
+                            </div>
+                        )}
+                        {!entryToEdit && (
+                            <p className="text-xs text-slate-500 dark:text-slate-400 italic">
+                                {t('check_in_out_hint') || 'Iniciará un registro continuo desde la hora indicada.'}
+                            </p>
+                        )}
                     </div>
                 )}
 
@@ -366,7 +459,9 @@ export const LogTimeModal: React.FC<LogTimeModalProps> = ({ date, onClose, onSav
             </div>
             <div className="flex items-center justify-end gap-4 p-4 mt-2 border-t border-slate-200 dark:border-slate-700">
                 <button onClick={onClose} className="flex items-center justify-center rounded-lg h-12 px-6 bg-slate-200 dark:bg-slate-700 text-black dark:text-gray-200 text-base font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">{t('cancel')}</button>
-                <button onClick={handleSave} disabled={duration <= 0} className="flex items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-base font-bold hover:bg-primary/90 transition-colors disabled:bg-primary/40 disabled:cursor-not-allowed">{t('save')}</button>
+                <button onClick={handleSave} disabled={mode !== 'checkin' && duration <= 0} className="flex items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-base font-bold hover:bg-primary/90 transition-colors disabled:bg-primary/40 disabled:cursor-not-allowed">
+                    {mode === 'checkin' && !entryToEdit ? t('check_in') : t('save')}
+                </button>
             </div>
         </Modal>
     );
@@ -378,6 +473,7 @@ interface DetailsModalProps {
     spaceColor?: string;
     spaceName?: string;
     onClose: () => void;
+    onFinish?: (entry: TimeEntry) => void;
 }
 
 const formatDurationFromHours = (hours: number): string => {
@@ -390,7 +486,7 @@ const formatDurationFromHours = (hours: number): string => {
     return `${h}:${String(m).padStart(2, '0')}`;
 };
 
-export const DetailsModal: React.FC<DetailsModalProps> = ({ entry, spaceColor = 'bg-primary', spaceName = '', onClose }) => {
+export const DetailsModal: React.FC<DetailsModalProps> = ({ entry, spaceColor = 'bg-primary', spaceName = '', onClose, onFinish }) => {
     const { t, locale } = useLocalization();
     const formattedDate = new Date(entry.date + 'T12:00:00').toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' });
 
@@ -428,13 +524,15 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({ entry, spaceColor = 
                 <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/5 backdrop-blur-md">
                         <span className="material-symbols-outlined text-primary mb-1 text-xl">timer</span>
-                        <span className="text-2xl font-black text-slate-900 dark:text-white">{formatDurationFromHours(entry.duration)}</span>
+                        <span className="text-2xl font-black text-slate-900 dark:text-white">
+                            {entry.isOngoing ? t('ongoing') : formatDurationFromHours(entry.duration)}
+                        </span>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{t('duration')}</span>
                     </div>
                     <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/5 backdrop-blur-md">
                         <span className="material-symbols-outlined text-primary mb-1 text-xl">history</span>
                         <span className="text-sm font-black text-slate-900 dark:text-white">
-                            {entry.startTime && entry.endTime ? `${entry.startTime} - ${entry.endTime}` : '-- : --'}
+                            {entry.isOngoing ? `${entry.startTime} - ...` : (entry.startTime && entry.endTime ? `${entry.startTime} - ${entry.endTime}` : '-- : --')}
                         </span>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{t('time_range')}</span>
                     </div>
@@ -480,13 +578,26 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({ entry, spaceColor = 
                     </div>
                 </div>
 
-                {/* Close Success */}
-                <button
-                    onClick={onClose}
-                    className="w-full h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-lg backdrop-blur-md mt-2"
-                >
-                    {t('close')}
-                </button>
+                {/* Finish/Close Button */}
+                {entry.isOngoing && onFinish ? (
+                    <button
+                        onClick={() => {
+                            onFinish(entry);
+                            onClose();
+                        }}
+                        className="w-full h-14 rounded-2xl bg-primary text-white font-black text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-lg backdrop-blur-md mt-2 flex items-center justify-center gap-2"
+                    >
+                        <span className="material-symbols-outlined">stop_circle</span>
+                        {t('finish')}
+                    </button>
+                ) : (
+                    <button
+                        onClick={onClose}
+                        className="w-full h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-lg backdrop-blur-md mt-2"
+                    >
+                        {t('close')}
+                    </button>
+                )}
             </div>
         </Modal>
     );

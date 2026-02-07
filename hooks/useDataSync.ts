@@ -132,7 +132,7 @@ export const useDataSync = (
         }
     }, [user, isSyncing, localSpaces, localEntries, setLocalSpaces, setLocalEntries, notify, t, saveKnownIds, getKnownIds]);
 
-    // Initial Sync on Mount/Login
+    // Initial Sync on Mount/Login + Focus/Interval
     useEffect(() => {
         if (user && !hasInitialSynced.current) {
             hasInitialSynced.current = true;
@@ -140,6 +140,27 @@ export const useDataSync = (
         } else if (!user) {
             hasInitialSynced.current = false;
         }
+
+        // Auto-sync on Tab Focus (Multi-device interoperability)
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible' && user) {
+                syncNow();
+            }
+        };
+
+        // Periodic Sync Every 5 Minutes
+        const interval = setInterval(() => {
+            if (user) syncNow();
+        }, 5 * 60 * 1000);
+
+        window.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('focus', handleVisibilityChange);
+
+        return () => {
+            window.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleVisibilityChange);
+            clearInterval(interval);
+        };
     }, [user, syncNow]);
 
     return { isSyncing, syncNow };
