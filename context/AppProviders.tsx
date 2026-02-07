@@ -203,7 +203,9 @@ const translations = {
     'auth_already_have_account': 'Already have an account?',
     'auth_privacy_accept_pre': 'I accept the',
     'auth_privacy_policy': 'Privacy Policy',
-    'auth_privacy_accept_post': 'and allow my data to be processed as described.',
+    'auth_terms_of_service': 'Terms of Service',
+    'auth_accept_connector': 'and',
+    'auth_privacy_accept_post': '.',
     'passwords_mismatch': "Passwords don't match",
     'your_name': 'Your Name',
     // New Auth Flow Keys
@@ -432,7 +434,9 @@ const translations = {
     'auth_already_have_account': '¿Ya tienes una cuenta?',
     'auth_privacy_accept_pre': 'Acepto la',
     'auth_privacy_policy': 'Política de Privacidad',
-    'auth_privacy_accept_post': 'y permito que mis datos sean procesados.',
+    'auth_terms_of_service': 'Términos y Condiciones',
+    'auth_accept_connector': 'y',
+    'auth_privacy_accept_post': '.',
     'passwords_mismatch': 'Las contraseñas no coinciden',
     'your_name': 'Tu Nombre',
     // Nuevas claves de Auth Flow

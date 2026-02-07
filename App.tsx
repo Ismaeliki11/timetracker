@@ -36,6 +36,9 @@ import Profile from './pages/Profile';
 import ForgotPassword from './pages/ForgotPassword';
 import EmailConfirmed from './pages/EmailConfirmed';
 import UpdatePassword from './pages/UpdatePassword';
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import TermsOfService from './pages/legal/TermsOfService';
+import CookiesPolicy from './pages/legal/CookiesPolicy';
 
 // --- Redirector Component ---
 const Redirector = ({ spaces }: { spaces: Space[] }) => {
@@ -405,6 +408,11 @@ const MainLayoutWithModals = ({ spaces, setSpaces, timeEntries, setTimeEntries, 
             />
           } />
           <Route path="/space/:spaceId/stats" element={<StatisticsWrapper spaces={spaces} timeEntries={timeEntries} />} />
+
+          {/* Legal Pages */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/cookies" element={<CookiesPolicy />} />
         </Routes>
       </div>
 
@@ -482,6 +490,9 @@ const App: React.FC = () => {
         <Route path="/recovery" element={<AuthRedirect><ForgotPassword /></AuthRedirect>} />
         <Route path="/email-confirmed" element={<EmailConfirmed />} />
         <Route path="/update-password" element={<UpdatePassword />} />
+
+        {/* Legal Pages */}
+
 
         {/* Public Routes (formerly protected) */}
         <Route path="/*" element={

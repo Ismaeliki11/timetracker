@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-import PrivacyPolicyModal from '../components/PrivacyPolicyModal';
 import { useLocalization, useTheme } from '../context/AppProviders';
 import { AuthLanguageSelector } from '../components/AuthLanguageSelector';
 import { mapAuthError } from '../utils/authErrors';
@@ -13,7 +12,7 @@ const Register: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+
     const navigate = useNavigate();
     const { t } = useLocalization();
     const { theme, toggleTheme } = useTheme();
@@ -171,7 +170,15 @@ const Register: React.FC = () => {
                             className="w-5 h-5 mt-0.5 rounded border-slate-300 dark:border-gray-600 bg-slate-100 dark:bg-[#202020] text-blue-600 focus:ring-blue-500 focus:ring-offset-white dark:focus:ring-offset-gray-900 cursor-pointer accent-blue-600"
                         />
                         <label htmlFor="privacy" className="text-sm font-medium text-slate-500 dark:text-gray-400 cursor-pointer select-none leading-snug">
-                            {t('auth_privacy_accept_pre')} <button type="button" onClick={() => setShowPrivacyModal(true)} className="text-blue-600 dark:text-blue-500 font-bold hover:underline hover:text-blue-500 dark:hover:text-blue-400">{t('auth_privacy_policy')}</button> {t('auth_privacy_accept_post')}
+                            {t('auth_privacy_accept_pre')}{' '}
+                            <Link to="/privacy" target="_blank" className="text-blue-600 dark:text-blue-500 font-bold hover:underline hover:text-blue-500 dark:hover:text-blue-400">
+                                {t('auth_privacy_policy')}
+                            </Link>{' '}
+                            {t('auth_accept_connector')}{' '}
+                            <Link to="/terms" target="_blank" className="text-blue-600 dark:text-blue-500 font-bold hover:underline hover:text-blue-500 dark:hover:text-blue-400">
+                                {t('auth_terms_of_service')}
+                            </Link>
+                            {t('auth_privacy_accept_post')}
                         </label>
                     </div>
 
@@ -194,7 +201,7 @@ const Register: React.FC = () => {
                 </div>
             </div>
 
-            <PrivacyPolicyModal isOpen={showPrivacyModal} onClose={() => setShowPrivacyModal(false)} />
+
         </div>
     );
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme, useLocalization } from '../context/AppProviders';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export const Header: React.FC<{ onInfoClick: () => void, onProfileClick: () => void, isSyncing?: boolean, onSyncClick?: () => void }> = ({ onInfoClick, onProfileClick, isSyncing, onSyncClick }) => {
     const { theme, toggleTheme } = useTheme();
@@ -100,6 +100,15 @@ export const InfoPanel: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                     <div className="flex justify-center p-1 rounded-lg bg-slate-100 dark:bg-slate-800">
                         <button onClick={() => setLanguage('en')} className={`px-4 py-1.5 rounded-md text-sm font-medium flex-1 transition-all ${language === 'en' ? 'bg-white dark:bg-slate-700 shadow' : 'text-slate-700 dark:text-slate-200'}`}>English</button>
                         <button onClick={() => setLanguage('es')} className={`px-4 py-1.5 rounded-md text-sm font-medium flex-1 transition-all ${language === 'es' ? 'bg-white dark:bg-slate-700 shadow' : 'text-slate-700 dark:text-slate-200'}`}>Español</button>
+                    </div>
+                </div>
+
+                <div className="border-t border-slate-200 dark:border-slate-700 mt-6 pt-4 flex flex-col gap-2 text-center">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wider mb-2">Legal</p>
+                    <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
+                        <Link to="/privacy" className="hover:text-primary hover:underline" onClick={onClose}>Privacy</Link>
+                        <Link to="/terms" className="hover:text-primary hover:underline" onClick={onClose}>Terms</Link>
+                        <Link to="/cookies" className="hover:text-primary hover:underline" onClick={onClose}>Cookies</Link>
                     </div>
                 </div>
             </div>
