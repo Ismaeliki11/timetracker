@@ -21,6 +21,13 @@ const AuthRedirect: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   return <>{children}</>;
 };
 
+// --- Landing Route: shows landing for guests, redirects logged-in users ---
+const LandingRoute: React.FC = () => {
+  const { user } = useAuth();
+  if (user) return <Navigate to="/spaces" replace />;
+  return <Landing />;
+};
+
 // Services & Context
 import { useAuth } from './context/AuthContext';
 import { useNotification } from './context/NotificationContext';
@@ -39,6 +46,7 @@ import UpdatePassword from './pages/UpdatePassword';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import TermsOfService from './pages/legal/TermsOfService';
 import CookiesPolicy from './pages/legal/CookiesPolicy';
+import Landing from './pages/Landing';
 
 // --- Redirector Component ---
 const Redirector = ({ spaces }: { spaces: Space[] }) => {
@@ -491,8 +499,8 @@ const App: React.FC = () => {
         <Route path="/email-confirmed" element={<EmailConfirmed />} />
         <Route path="/update-password" element={<UpdatePassword />} />
 
-        {/* Legal Pages */}
-
+        {/* Landing page */}
+        <Route path="/" element={<LandingRoute />} />
 
         {/* Public Routes (formerly protected) */}
         <Route path="/*" element={
