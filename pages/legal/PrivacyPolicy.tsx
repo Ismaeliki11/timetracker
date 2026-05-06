@@ -36,7 +36,7 @@ const PrivacyPolicy = () => {
         </h3>
         <p>{t('privacy_data_intro')}</p>
 
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
             <strong className="mb-1 block text-primary">{t('privacy_data_account_title')}</strong>
             <span className="text-sm">{t('privacy_data_account_text')}</span>
@@ -53,7 +53,7 @@ const PrivacyPolicy = () => {
             <strong className="mb-1 block text-primary">{t('privacy_data_analytics_title')}</strong>
             <span className="text-sm">{t('privacy_data_analytics_text')}</span>
           </div>
-          <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50 md:col-span-2">
+          <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50 md:col-span-2 lg:col-span-3">
             <strong className="mb-1 block text-primary">{t('privacy_data_search_console_title')}</strong>
             <span className="text-sm">{t('privacy_data_search_console_text')}</span>
           </div>

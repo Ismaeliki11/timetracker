@@ -31,7 +31,7 @@ const CookiesPolicy = () => {
         </h3>
         <p className="mb-4">{t('cookies_types_intro')}</p>
 
-        <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[
             {
               icon: 'vpn_key',

@@ -48,7 +48,7 @@ const TermsOfService = () => {
           {t('terms_section_license')}
         </h3>
         <p>{t('terms_license_body')}</p>
-        <div className="mt-3 flex flex-col gap-2 rounded-lg bg-slate-50 p-4 dark:bg-slate-800/50">
+        <div className="mt-3 flex flex-col md:flex-row md:items-center md:justify-around gap-4 rounded-lg bg-slate-50 p-4 dark:bg-slate-800/50">
           <div className="flex items-center gap-2 text-sm font-medium text-green-600 dark:text-green-400">
             <span className="material-symbols-outlined text-sm">check</span>
             <span>{t('terms_license_yes')}</span>

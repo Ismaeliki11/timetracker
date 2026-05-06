@@ -13,14 +13,14 @@ export const LegalPageLayout: React.FC<LegalPageLayoutProps> = ({ title, lastUpd
     const { t } = useLocalization();
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-4 md:p-8 flex justify-center">
-            <div className="w-full max-w-2xl bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 dark:border-white/10 overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4 md:p-8 lg:p-12 flex justify-center">
+            <div className="w-full max-w-2xl lg:max-w-4xl flex flex-col">
 
                 {/* Header Section */}
-                <div className="p-6 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 flex-shrink-0">
+                <div className="pb-8 mb-8 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
                     <button
                         onClick={() => navigate(-1)}
-                        className="mb-4 flex items-center text-sm font-medium text-primary hover:text-primary-focus transition-colors gap-2 group"
+                        className="mb-6 flex items-center text-sm font-medium text-primary hover:text-primary-focus transition-colors gap-2 group"
                     >
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                             <span className="material-symbols-outlined text-lg">arrow_back</span>
@@ -28,17 +28,17 @@ export const LegalPageLayout: React.FC<LegalPageLayoutProps> = ({ title, lastUpd
                         {t('back') || 'Back'}
                     </button>
 
-                    <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">
                         {title}
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs mt-2 font-mono uppercase tracking-wider opacity-70">
+                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-4 font-mono uppercase tracking-widest opacity-80">
                         {t('last_updated') || 'Last Updated'}: {lastUpdated}
                     </p>
                 </div>
 
-                {/* Content Section - Scrollable */}
-                <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
-                    <div className="prose prose-slate dark:prose-invert prose-sm md:prose-base max-w-none 
+                {/* Content Section */}
+                <div className="flex-1 pb-20">
+                    <div className="prose prose-slate dark:prose-invert prose-base md:prose-lg lg:prose-xl max-w-none 
                         prose-headings:font-bold prose-headings:text-slate-900 dark:prose-headings:text-slate-100
                         prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-relaxed
                         prose-a:text-primary hover:prose-a:text-primary-focus prose-a:transition-colors
@@ -49,22 +49,6 @@ export const LegalPageLayout: React.FC<LegalPageLayoutProps> = ({ title, lastUpd
                     </div>
                 </div>
             </div>
-
-            <style>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 6px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background-color: rgba(156, 163, 175, 0.3);
-                    border-radius: 20px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background-color: rgba(156, 163, 175, 0.5);
-                }
-            `}</style>
         </div>
     );
 };
