@@ -819,7 +819,6 @@ export const useDateFormat = () => {
 };
 
 // --- COMBINED PROVIDER ---
-import { AuthProvider } from './AuthContext';
 import { NotificationProvider } from './NotificationContext';
 
 export const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -828,9 +827,7 @@ export const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children
       <DateFormatProvider>
         <ThemeProvider>
           <NotificationProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
+            {children}
           </NotificationProvider>
         </ThemeProvider>
       </DateFormatProvider>

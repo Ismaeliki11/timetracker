@@ -1,7 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLocalization } from '../context/AppProviders';
-import { useAuth } from '../context/AuthContext';
 
 const MockAppPreview: React.FC<{ t: (key: string) => string }> = ({ t }) => (
   <div className="mx-auto w-64 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 select-none pointer-events-none">
@@ -58,12 +57,12 @@ const MockAppPreview: React.FC<{ t: (key: string) => string }> = ({ t }) => (
 );
 
 interface LandingProps {
+  hasAuthenticatedSession?: boolean;
   preferredLanguage: 'en' | 'es';
 }
 
-const Landing: React.FC<LandingProps> = ({ preferredLanguage }) => {
+const Landing: React.FC<LandingProps> = ({ hasAuthenticatedSession = false, preferredLanguage }) => {
   const { t, language, setLanguage } = useLocalization();
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   useLayoutEffect(() => {
@@ -110,7 +109,7 @@ const Landing: React.FC<LandingProps> = ({ preferredLanguage }) => {
             >
               {language === 'en' ? 'ES' : 'EN'}
             </button>
-            {user ? (
+            {hasAuthenticatedSession ? (
               <Link
                 to="/spaces"
                 className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"

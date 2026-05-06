@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { useLocalization, useTheme } from '../context/AppProviders';
-import { AuthLanguageSelector } from '../components/AuthLanguageSelector';
-import { useAuth } from '../context/AuthContext';
 import { mapAuthError } from '../utils/authErrors';
 
 const UpdatePassword: React.FC = () => {
@@ -13,15 +11,6 @@ const UpdatePassword: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useLocalization();
     const { theme, toggleTheme } = useTheme();
-    const { session } = useAuth(); // Used to check if we are authenticated (link provides session)
-
-    // Optional: Redirect if no session? Ideally Supabase link logs user in. 
-    // If accessed directly without session, they can't update password.
-
-    useEffect(() => {
-        // If we are not authenticated, we probably shouldn't be here, unless it's just loading.
-        // But let's handle the update blindly, if session is missing supabase will fail or we can block it.
-    }, [session]);
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
