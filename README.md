@@ -13,9 +13,25 @@ A sophisticated, cross-platform time tracking application built for productivity
 *   **Offline-First Architecture**: Continue tracking time without an internet connection. The app automatically reconciles and uploads your data when connectivity is restored.
 *   **Cross-Device Interoperability**: "Ongoing" entries are synced in real-time, allowing for true multi-device workflows.
 *   **Analytics & Insights**: Visualize your productivity with breakdowns by Space, trends over time, and detailed history.
-*   **Privacy Focused**: Guest mode allows full local usage without an account. Data is only synced if you choose to sign in.
+*   **Privacy Focused**: Guest mode allows full local usage without an account. Data is only synced if you choose to sign in, and website analytics only load after explicit cookie consent.
 *   **Modern UI/UX**: Features a sleek glassmorphism design, dark mode support, and fluid animations.
 *   **Localization**: Fully localized in English and Spanish.
+
+## Privacy, Cookies, and Google Services
+
+The public website now uses a consent-gated analytics setup:
+
+*   **Google Analytics 4**: Used for optional website analytics and loaded only after the visitor accepts analytics cookies.
+*   **Google Tag Manager**: Used as the tag delivery layer for optional analytics scripts, also loaded only after consent.
+*   **Google Search Console**: Used for indexing and search performance diagnostics. It does not add optional analytics cookies to visitors' browsers through the site.
+
+The repository and app include updated legal pages for:
+
+*   `Privacy Policy`
+*   `Cookies Policy`
+*   `Terms and Conditions`
+
+Visitors can accept or reject analytics cookies from the cookie banner and reopen cookie preferences later from the site footer or legal pages.
 
 ## 🛠️ Tech Stack
 
@@ -76,7 +92,7 @@ The application is fully responsive and optimized for mobile devices, functionin
 This application was crafted by **Ismael** as a personal portfolio project, driven by a genuine passion for building high-quality, useful software.
 
 *   **For the Love of Art**: This project was created "por amor al arte" (for the love of art), focusing purely on user experience and technical craftsmanship rather than monetization.
-*   **No Ads, No Fees**: This tool is completely free to use. There are no advertisements, no tracking, and no hidden costs.
+*   **No Ads, No Fees**: This tool is completely free to use. There are no advertisements and no hidden costs. The public website uses limited analytics only after user consent.
 *   **Open & Educational**: The source code is available for anyone to learn from, showcasing modern React patterns and real-time synchronization strategies.
 
 ## 📄 License

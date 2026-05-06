@@ -1,113 +1,197 @@
 import React from 'react';
 import { LegalPageLayout } from '../../components/LegalPageLayout';
+import { useLocalization } from '../../context/AppProviders';
+import { useCookieConsent } from '../../context/CookieConsentContext';
 
 const PrivacyPolicy = () => {
-    return (
-        <LegalPageLayout title="Política de Privacidad" lastUpdated="07/02/2026">
-            <div className="intro-text mb-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-primary">
-                <p className="m-0">
-                    En <strong>Time Tracker</strong> ("nosotros", "nuestro"), valoramos profundamente su privacidad. Esta Política explica de forma transparente cómo tratamos su información.
-                </p>
-            </div>
+  const { t, language } = useLocalization();
+  const { openCookieSettings } = useCookieConsent();
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">security</span>
-                    1. Responsable del Tratamiento
-                </h3>
-                <p>
-                    El responsable del tratamiento de sus datos es <strong>Ismael Flores Andreo (Ismaeliki)</strong>.<br />
-                    Para cualquier duda relacionada con la privacidad, puede contactar en: <a href="mailto:ismaeliki11@gmail.com" className="font-mono bg-slate-100 dark:bg-slate-800 px-1 rounded hover:underline text-primary">ismaeliki11@gmail.com</a>
-                </p>
-            </section>
+  return (
+    <LegalPageLayout title={t('privacy_title')} lastUpdated={t('legal_last_updated_value')}>
+      <div className="mb-8 rounded-lg border-l-4 border-primary bg-blue-50 p-4 dark:bg-blue-900/20">
+        <p className="m-0">{t('privacy_intro')}</p>
+      </div>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">folder_shared</span>
-                    2. Información que Recopilamos
-                </h3>
-                <p>Recopilamos únicamente la información necesaria para que la aplicación funcione:</p>
-                <div className="grid md:grid-cols-2 gap-4 mt-4">
-                    <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-                        <strong className="block text-primary mb-1">Información de Cuenta</strong>
-                        <span className="text-sm">Dirección de correo electrónico y contraseña (esta última encriptada) al registrarse.</span>
-                    </div>
-                    <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-                        <strong className="block text-primary mb-1">Datos de Uso</strong>
-                        <span className="text-sm">Sus entradas de tiempo, nombres de espacios ("Spaces") y configuraciones personales.</span>
-                    </div>
-                    <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 md:col-span-2">
-                        <strong className="block text-primary mb-1">Datos Técnicos</strong>
-                        <span className="text-sm">Dirección IP y metadatos de conexión necesarios para la seguridad y sincronización con Supabase.</span>
-                    </div>
-                </div>
-            </section>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">security</span>
+          {t('privacy_section_controller')}
+        </h3>
+        <p>
+          {t('privacy_controller_body')}{' '}
+          <a
+            href="mailto:ismaeliki11@gmail.com"
+            className="rounded bg-slate-100 px-1 font-mono text-primary hover:underline dark:bg-slate-800"
+          >
+            ismaeliki11@gmail.com
+          </a>
+        </p>
+      </section>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">target</span>
-                    3. Finalidad del Tratamiento
-                </h3>
-                <p>Usamos sus datos exclusivamente para:</p>
-                <ul className="list-none pl-0 space-y-2 mt-2">
-                    <li className="flex gap-2">
-                        <span className="material-symbols-outlined text-green-500 text-sm mt-1">check_circle</span>
-                        <span>Proporcionar, mantener y mejorar el servicio de seguimiento de tiempo.</span>
-                    </li>
-                    <li className="flex gap-2">
-                        <span className="material-symbols-outlined text-green-500 text-sm mt-1">check_circle</span>
-                        <span>Sincronizar sus datos entre todos sus dispositivos en tiempo real.</span>
-                    </li>
-                    <li className="flex gap-2">
-                        <span className="material-symbols-outlined text-green-500 text-sm mt-1">check_circle</span>
-                        <span>Autenticar su acceso seguro a la cuenta.</span>
-                    </li>
-                </ul>
-                <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/10 text-red-800 dark:text-red-200 text-sm rounded border border-red-100 dark:border-red-900/30 font-medium text-center">
-                    No vendemos ni compartimos sus datos con terceros con fines publicitarios.
-                </div>
-            </section>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">folder_shared</span>
+          {t('privacy_section_data')}
+        </h3>
+        <p>{t('privacy_data_intro')}</p>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">dns</span>
-                    4. Almacenamiento de Datos
-                </h3>
-                <p>
-                    Sus datos se almacenan de forma segura en los servidores de <strong>Supabase</strong> (nuestro proveedor de base de datos). Puede consultar su política de privacidad en <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a>.
-                </p>
-            </section>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+            <strong className="mb-1 block text-primary">{t('privacy_data_account_title')}</strong>
+            <span className="text-sm">{t('privacy_data_account_text')}</span>
+          </div>
+          <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+            <strong className="mb-1 block text-primary">{t('privacy_data_usage_title')}</strong>
+            <span className="text-sm">{t('privacy_data_usage_text')}</span>
+          </div>
+          <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+            <strong className="mb-1 block text-primary">{t('privacy_data_technical_title')}</strong>
+            <span className="text-sm">{t('privacy_data_technical_text')}</span>
+          </div>
+          <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+            <strong className="mb-1 block text-primary">{t('privacy_data_analytics_title')}</strong>
+            <span className="text-sm">{t('privacy_data_analytics_text')}</span>
+          </div>
+          <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50 md:col-span-2">
+            <strong className="mb-1 block text-primary">{t('privacy_data_search_console_title')}</strong>
+            <span className="text-sm">{t('privacy_data_search_console_text')}</span>
+          </div>
+        </div>
+      </section>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">gavel</span>
-                    5. Sus Derechos (RGPD)
-                </h3>
-                <p>
-                    Usted tiene control total sobre sus datos. Tiene derecho a:
-                </p>
-                <div className="flex flex-wrap gap-2 mt-3">
-                    <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-medium">Acceso</span>
-                    <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-medium">Rectificación</span>
-                    <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-medium">Supresión (Olvido)</span>
-                    <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-medium">Portabilidad</span>
-                </div>
-                <p className="mt-4 text-sm text-slate-500">
-                    Puede ejercer estos derechos contactándonos directamente o utilizando las herramientas de eliminación de cuenta dentro de la aplicación.
-                </p>
-            </section>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">target</span>
+          {t('privacy_section_purposes')}
+        </h3>
+        <p>{t('privacy_purposes_intro')}</p>
+        <ul className="mt-3 list-none space-y-2 pl-0">
+          {[
+            'privacy_purpose_service',
+            'privacy_purpose_sync',
+            'privacy_purpose_auth',
+            'privacy_purpose_security',
+            'privacy_purpose_analytics',
+            'privacy_purpose_search_console',
+          ].map((key) => (
+            <li key={key} className="flex gap-2">
+              <span className="material-symbols-outlined mt-1 text-sm text-green-500">check_circle</span>
+              <span>{t(key)}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4 rounded border border-red-100 bg-red-50 p-3 text-center text-sm font-medium text-red-800 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-200">
+          {t('privacy_no_ads')}
+        </div>
+      </section>
 
-            <section>
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">update</span>
-                    6. Cambios en esta Política
-                </h3>
-                <p>
-                    Podemos actualizar esta política ocasionalmente. Le notificaremos sobre cambios significativos a través de la aplicación o por correo electrónico.
-                </p>
-            </section>
-        </LegalPageLayout>
-    );
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">gavel</span>
+          {t('privacy_section_legal_basis')}
+        </h3>
+        <p>{t('privacy_legal_intro')}</p>
+        <ul className="mt-3 list-disc space-y-2 pl-5">
+          <li>{t('privacy_legal_service')}</li>
+          <li>{t('privacy_legal_security')}</li>
+          <li>{t('privacy_legal_analytics')}</li>
+          <li>{t('privacy_legal_search_console')}</li>
+        </ul>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">dns</span>
+          {t('privacy_section_processors')}
+        </h3>
+        <p>{t('privacy_processors_intro')}</p>
+        <ul className="mt-3 list-disc space-y-2 pl-5">
+          <li>{t('privacy_processor_supabase')}</li>
+          <li>{t('privacy_processor_vercel')}</li>
+          <li>{t('privacy_processor_google')}</li>
+          <li>{t('privacy_processor_transfers')}</li>
+        </ul>
+        <div className="mt-4 flex flex-wrap gap-3 text-sm">
+          <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">
+            {t('legal_link_supabase')}
+          </a>
+          <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">
+            {t('legal_link_vercel')}
+          </a>
+          <a
+            href={`https://policies.google.com/privacy?hl=${language}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('legal_link_google_privacy')}
+          </a>
+          <a
+            href={`https://policies.google.com/technologies/partner-sites?hl=${language}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('legal_link_google_partner_sites')}
+          </a>
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">schedule</span>
+          {t('privacy_section_retention')}
+        </h3>
+        <p>{t('privacy_retention_intro')}</p>
+        <ul className="mt-3 list-disc space-y-2 pl-5">
+          <li>{t('privacy_retention_account')}</li>
+          <li>{t('privacy_retention_local')}</li>
+          <li>{t('privacy_retention_analytics')}</li>
+          <li>{t('privacy_retention_search_console')}</li>
+        </ul>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">verified_user</span>
+          {t('privacy_section_rights')}
+        </h3>
+        <p>{t('privacy_rights_intro')}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {[
+            'privacy_rights_access',
+            'privacy_rights_rectification',
+            'privacy_rights_erasure',
+            'privacy_rights_portability',
+            'privacy_rights_objection',
+            'privacy_rights_withdrawal',
+          ].map((key) => (
+            <span
+              key={key}
+              className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium dark:bg-slate-700"
+            >
+              {t(key)}
+            </span>
+          ))}
+        </div>
+        <p className="mt-4 text-sm text-slate-500">{t('privacy_rights_body')}</p>
+        <button
+          type="button"
+          onClick={openCookieSettings}
+          className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
+        >
+          {t('cookie_settings')}
+        </button>
+      </section>
+
+      <section>
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">update</span>
+          {t('privacy_section_changes')}
+        </h3>
+        <p>{t('privacy_changes_body')}</p>
+      </section>
+    </LegalPageLayout>
+  );
 };
 
 export default PrivacyPolicy;

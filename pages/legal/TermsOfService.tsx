@@ -1,104 +1,93 @@
 import React from 'react';
 import { LegalPageLayout } from '../../components/LegalPageLayout';
+import { useLocalization } from '../../context/AppProviders';
 
 const TermsOfService = () => {
-    return (
-        <LegalPageLayout title="Términos y Condiciones" lastUpdated="07/02/2026">
-            <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-4 rounded-r mb-8">
-                <p className="text-amber-900 dark:text-amber-100 text-sm m-0">
-                    <strong>Resumen rápido:</strong> Esta es una aplicación de portafolio personal ("hobby project"). Úsala libremente para mejorar tu productividad, pero ten en cuenta que se ofrece "tal cual" y sin garantías comerciales.
-                </p>
-            </div>
+  const { t } = useLocalization();
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">description</span>
-                    1. Descripción del Servicio
-                </h3>
-                <p>
-                    Time Tracker es una herramienta de productividad diseñada para ayudar a los usuarios a registrar y gestionar su tiempo. Se ofrece como un proyecto de código abierto y educativo.
-                </p>
-            </section>
+  return (
+    <LegalPageLayout title={t('terms_title')} lastUpdated={t('legal_last_updated_value')}>
+      <div className="mb-8 rounded-r border-l-4 border-amber-500 bg-amber-50 p-4 dark:bg-amber-900/20">
+        <p className="m-0 text-sm text-amber-900 dark:text-amber-100">
+          <strong>{t('terms_intro')}</strong>
+        </p>
+      </div>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">do_not_touch</span>
-                    2. Uso Aceptable
-                </h3>
-                <p>
-                    Usted se compromete a utilizar el servicio de manera ética. Queda prohibido:
-                </p>
-                <ul className="list-disc pl-5 space-y-1 mt-2">
-                    <li>Utilizar el servicio para fines ilegales.</li>
-                    <li>Intentar vulnerar la seguridad de la aplicación o de otros usuarios.</li>
-                    <li>Realizar ingeniería inversa o abusar de la API de sincronización (spamming).</li>
-                </ul>
-            </section>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">description</span>
+          {t('terms_section_service')}
+        </h3>
+        <p>{t('terms_service_body')}</p>
+      </section>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">vpn_key</span>
-                    3. Cuentas y Seguridad
-                </h3>
-                <p>
-                    Usted es responsable de mantener la confidencialidad de su contraseña. Recomendamos usar contraseñas seguras y únicas. No nos hacemos responsables de pérdidas derivadas de un uso no autorizado de su cuenta si la brecha de seguridad se debe a un descuido en la custodia de sus credenciales.
-                </p>
-            </section>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">do_not_touch</span>
+          {t('terms_section_use')}
+        </h3>
+        <p>{t('terms_use_intro')}</p>
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          <li>{t('terms_use_item_1')}</li>
+          <li>{t('terms_use_item_2')}</li>
+          <li>{t('terms_use_item_3')}</li>
+        </ul>
+      </section>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">copyright</span>
-                    4. Propiedad Intelectual y Licencia
-                </h3>
-                <p>
-                    El código fuente de este proyecto se comparte bajo una licencia <strong>No Comercial</strong>.
-                </p>
-                <div className="flex flex-col gap-2 mt-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                        <span className="material-symbols-outlined text-sm">check</span>
-                        <span className="text-sm font-medium">Puedes: Usar, estudiar y modificar el código para uso personal/educativo.</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                        <span className="material-symbols-outlined text-sm">close</span>
-                        <span className="text-sm font-medium">No puedes: Vender, redistribuir comercialmente o lucrarte con esta obra.</span>
-                    </div>
-                </div>
-            </section>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">vpn_key</span>
+          {t('terms_section_security')}
+        </h3>
+        <p>{t('terms_security_body')}</p>
+      </section>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">warning</span>
-                    5. Limitación de Responsabilidad
-                </h3>
-                <p className="text-justify">
-                    En la máxima medida permitida por la ley, Time Tracker y su desarrollador no serán responsables de daños indirectos, pérdida de datos o interrupciones del servicio.
-                </p>
-                <p className="mt-2 text-sm text-slate-500 italic border-l-2 border-slate-300 pl-3">
-                    "El software se proporciona 'tal cual', sin garantía de ningún tipo, expresa o implícita..."
-                </p>
-            </section>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">copyright</span>
+          {t('terms_section_license')}
+        </h3>
+        <p>{t('terms_license_body')}</p>
+        <div className="mt-3 flex flex-col gap-2 rounded-lg bg-slate-50 p-4 dark:bg-slate-800/50">
+          <div className="flex items-center gap-2 text-sm font-medium text-green-600 dark:text-green-400">
+            <span className="material-symbols-outlined text-sm">check</span>
+            <span>{t('terms_license_yes')}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm font-medium text-red-600 dark:text-red-400">
+            <span className="material-symbols-outlined text-sm">close</span>
+            <span>{t('terms_license_no')}</span>
+          </div>
+        </div>
+      </section>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">gavel</span>
-                    6. Legislación y Jurisdicción
-                </h3>
-                <p>
-                    Estos términos se rigen por la legislación española. Para cualquier controversia que pudiera surgir, ambas partes se someten a los juzgados y tribunales de <strong>Totana (Murcia)</strong>, renunciando a cualquier otro fuero que pudiera corresponderles.
-                </p>
-            </section>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">warning</span>
+          {t('terms_section_liability')}
+        </h3>
+        <p className="text-justify">{t('terms_liability_body')}</p>
+        <p className="mt-2 border-l-2 border-slate-300 pl-3 text-sm italic text-slate-500">
+          {t('terms_liability_quote')}
+        </p>
+      </section>
 
-            <section>
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">edit</span>
-                    7. Modificaciones
-                </h3>
-                <p>
-                    Nos reservamos el derecho de modificar estos términos. Notificaremos cambios importantes, pero es su responsabilidad revisar esta página periódicamente.
-                </p>
-            </section>
-        </LegalPageLayout>
-    );
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">gavel</span>
+          {t('terms_section_law')}
+        </h3>
+        <p>{t('terms_law_body')}</p>
+      </section>
+
+      <section>
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">edit</span>
+          {t('terms_section_changes')}
+        </h3>
+        <p>{t('terms_changes_body')}</p>
+      </section>
+    </LegalPageLayout>
+  );
 };
 
 export default TermsOfService;

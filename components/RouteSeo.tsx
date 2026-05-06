@@ -17,20 +17,39 @@ const LANDING_COPY = {
 } as const;
 
 const LEGAL_COPY = {
-  '/privacy': {
-    title: 'Política de privacidad | Time Tracker',
-    description:
-      'Consulta cómo Time Tracker recopila, utiliza y protege tus datos para ofrecer el servicio de seguimiento de tiempo y sincronización.',
+  es: {
+    '/privacy': {
+      title: 'Política de privacidad | Time Tracker',
+      description:
+        'Consulta cómo Time Tracker trata datos de cuenta, sincronización y analítica opcional de Google Analytics y Search Console.',
+    },
+    '/terms': {
+      title: 'Términos y condiciones | Time Tracker',
+      description:
+        'Lee los términos y condiciones de uso de Time Tracker, la aplicación para registrar horas y gestionar tu tiempo.',
+    },
+    '/cookies': {
+      title: 'Política de cookies | Time Tracker',
+      description:
+        'Conoce qué almacenamiento esencial y cookies analíticas opcionales utiliza Time Tracker y cómo gestionar tu consentimiento.',
+    },
   },
-  '/terms': {
-    title: 'Términos y condiciones | Time Tracker',
-    description:
-      'Lee los términos y condiciones de uso de Time Tracker, la aplicación para registrar horas y gestionar tu tiempo.',
-  },
-  '/cookies': {
-    title: 'Política de cookies | Time Tracker',
-    description:
-      'Conoce qué cookies y almacenamiento local utiliza Time Tracker para autenticación, idioma y preferencias básicas.',
+  en: {
+    '/privacy': {
+      title: 'Privacy Policy | Time Tracker',
+      description:
+        'Learn how Time Tracker handles account data, sync data, and optional analytics related to Google Analytics and Search Console.',
+    },
+    '/terms': {
+      title: 'Terms and Conditions | Time Tracker',
+      description:
+        'Read the terms and conditions for using Time Tracker, the app for logging hours and managing your time.',
+    },
+    '/cookies': {
+      title: 'Cookies Policy | Time Tracker',
+      description:
+        'See which essential storage and optional analytics cookies Time Tracker uses and how you can manage consent.',
+    },
   },
 } as const;
 
@@ -110,14 +129,14 @@ export const RouteSeo: React.FC = () => {
       };
     }
 
-    if (pathname in LEGAL_COPY) {
-      const legalEntry = LEGAL_COPY[pathname as keyof typeof LEGAL_COPY];
+    if (pathname in LEGAL_COPY.es) {
+      const legalEntry = LEGAL_COPY[language][pathname as keyof typeof LEGAL_COPY.es];
 
       return {
         title: legalEntry.title,
         description: legalEntry.description,
         path: pathname,
-        lang: 'es',
+        lang: language,
         robots: 'index, follow',
         alternates: [],
         structuredData: [],

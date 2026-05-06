@@ -1,6 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLocalization } from '../context/AppProviders';
+import { useCookieConsent } from '../context/CookieConsentContext';
 
 const MockAppPreview: React.FC<{ t: (key: string) => string }> = ({ t }) => (
   <div className="mx-auto w-64 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 select-none pointer-events-none">
@@ -63,6 +64,7 @@ interface LandingProps {
 
 const Landing: React.FC<LandingProps> = ({ hasAuthenticatedSession = false, preferredLanguage }) => {
   const { t, language, setLanguage } = useLocalization();
+  const { openCookieSettings } = useCookieConsent();
   const navigate = useNavigate();
 
   useLayoutEffect(() => {
@@ -125,7 +127,7 @@ const Landing: React.FC<LandingProps> = ({ hasAuthenticatedSession = false, pref
                   {t('auth_sign_in')}
                 </Link>
                 <Link
-                  to="/register"
+                  to="/spaces"
                   className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors whitespace-nowrap"
                 >
                   {t('landing_cta_primary')}
@@ -163,7 +165,7 @@ const Landing: React.FC<LandingProps> = ({ hasAuthenticatedSession = false, pref
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <Link
-                    to="/register"
+                    to="/spaces"
                     className="bg-primary text-white font-bold px-6 py-3.5 rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 text-base"
                   >
                     {t('landing_cta_primary')} →
@@ -287,7 +289,7 @@ const Landing: React.FC<LandingProps> = ({ hasAuthenticatedSession = false, pref
               {t('landing_free_subtitle')}
             </p>
             <Link
-              to="/register"
+              to="/spaces"
               className="bg-white text-primary font-black px-8 py-4 rounded-xl hover:bg-gray-50 transition-all text-lg shadow-xl"
             >
               {t('landing_free_cta')} →
@@ -321,6 +323,13 @@ const Landing: React.FC<LandingProps> = ({ hasAuthenticatedSession = false, pref
             <Link to="/cookies" className="hover:text-gray-900 dark:hover:text-white transition-colors">
               {t('landing_footer_cookies')}
             </Link>
+            <button
+              type="button"
+              onClick={openCookieSettings}
+              className="hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              {t('cookie_settings')}
+            </button>
           </nav>
         </div>
       </footer>

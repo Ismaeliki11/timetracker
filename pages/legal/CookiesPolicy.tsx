@@ -1,76 +1,147 @@
 import React from 'react';
 import { LegalPageLayout } from '../../components/LegalPageLayout';
+import { useLocalization } from '../../context/AppProviders';
+import { useCookieConsent } from '../../context/CookieConsentContext';
 
 const CookiesPolicy = () => {
-    return (
-        <LegalPageLayout title="Política de Cookies" lastUpdated="07/02/2026">
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-8">
-                <p className="m-0 text-blue-900 dark:text-blue-100 flex items-center gap-2">
-                    <span className="material-symbols-outlined">info</span>
-                    <strong>En resumen:</strong> Solo usamos las cookies estrictamente necesarias para que la app funcione. No hay rastreadores publicitarios.
-                </p>
+  const { t, language } = useLocalization();
+  const { openCookieSettings } = useCookieConsent();
+
+  return (
+    <LegalPageLayout title={t('cookies_title')} lastUpdated={t('legal_last_updated_value')}>
+      <div className="mb-8 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+        <p className="m-0 flex items-center gap-2 text-blue-900 dark:text-blue-100">
+          <span className="material-symbols-outlined">info</span>
+          <strong>{t('cookies_intro')}</strong>
+        </p>
+      </div>
+
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">help</span>
+          {t('cookies_section_about')}
+        </h3>
+        <p>{t('cookies_about_body')}</p>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">cookie</span>
+          {t('cookies_section_types')}
+        </h3>
+        <p className="mb-4">{t('cookies_types_intro')}</p>
+
+        <div className="space-y-4">
+          {[
+            {
+              icon: 'vpn_key',
+              title: t('cookies_essential_title'),
+              text: t('cookies_essential_text'),
+            },
+            {
+              icon: 'settings',
+              title: t('cookies_local_title'),
+              text: t('cookies_local_text'),
+            },
+            {
+              icon: 'analytics',
+              title: t('cookies_analytics_title'),
+              text: t('cookies_analytics_text'),
+            },
+          ].map((item) => (
+            <div
+              key={item.title}
+              className="flex items-start gap-4 rounded-lg border border-slate-100 bg-slate-50 p-4 transition-colors dark:border-slate-700 dark:bg-slate-800/50"
+            >
+              <div className="rounded bg-white p-2 text-primary shadow-sm dark:bg-slate-700">
+                <span className="material-symbols-outlined">{item.icon}</span>
+              </div>
+              <div>
+                <h4 className="mb-1 font-bold text-slate-900 dark:text-slate-100">{item.title}</h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">{item.text}</p>
+              </div>
             </div>
+          ))}
+        </div>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">help</span>
-                    1. ¿Qué son las Cookies?
-                </h3>
-                <p>
-                    Las cookies son pequeños archivos de texto que los sitios web guardan en su dispositivo. Son como "notas adhesivas" digitales que permiten recordar quién es usted y sus preferencias.
-                </p>
-            </section>
+        <div className="mt-4 rounded-lg border border-amber-100 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-100">
+          {t('cookies_search_console_note')}
+        </div>
+      </section>
 
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">cookie</span>
-                    2. Tipos de Cookies que utilizamos
-                </h3>
-                <p className="mb-4">
-                    Time Tracker utiliza <strong>exclusivamente cookies técnicas</strong>. Estas son vitales para el funcionamiento de la aplicación:
-                </p>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">settings_applications</span>
+          {t('cookies_section_management')}
+        </h3>
+        <p>{t('cookies_management_body_1')}</p>
+        <p className="mt-2">{t('cookies_management_body_2')}</p>
+        <p className="mt-2">{t('cookies_management_body_3')}</p>
+        <button
+          type="button"
+          onClick={openCookieSettings}
+          className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
+        >
+          {t('cookie_settings')}
+        </button>
+        <p className="mt-2 text-sm text-slate-500">{t('cookie_settings_description')}</p>
+      </section>
 
-                <div className="space-y-4">
-                    <div className="flex items-start gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 hover:border-primary/30 transition-colors pointer-events-none">
-                        <div className="p-2 bg-white dark:bg-slate-700 rounded shadow-sm text-primary">
-                            <span className="material-symbols-outlined">vpn_key</span>
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-slate-900 dark:text-slate-100 mb-1">Cookies de Sesión (Supabase)</h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                                Gestionan su identidad segura. Sin ellas, tendría que introducir su contraseña en cada acción que realice.
-                            </p>
-                        </div>
-                    </div>
+      <section className="mb-8">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">public</span>
+          {t('cookies_section_third_parties')}
+        </h3>
+        <p>{t('cookies_third_parties_intro')}</p>
+        <ul className="mt-3 list-disc space-y-2 pl-5">
+          <li>
+            <a
+              href={`https://policies.google.com/privacy?hl=${language}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('legal_link_google_privacy')}
+            </a>
+          </li>
+          <li>
+            <a
+              href={`https://policies.google.com/technologies/partner-sites?hl=${language}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('legal_link_google_partner_sites')}
+            </a>
+          </li>
+          <li>
+            <a
+              href={`https://support.google.com/analytics/answer/10000067?hl=${language}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('legal_link_google_consent')}
+            </a>
+          </li>
+          <li>
+            <a
+              href={`https://support.google.com/webmasters/answer/9008080?hl=${language}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('legal_link_search_console')}
+            </a>
+          </li>
+        </ul>
+      </section>
 
-                    <div className="flex items-start gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 hover:border-primary/30 transition-colors pointer-events-none">
-                        <div className="p-2 bg-white dark:bg-slate-700 rounded shadow-sm text-primary">
-                            <span className="material-symbols-outlined">settings</span>
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-slate-900 dark:text-slate-100 mb-1">Almacenamiento Local (Local Storage)</h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                                Guardamos sus preferencias visuales (Modo Oscuro) y su configuración de idioma en su propio navegador para que no tenga que reconfigurarlas cada vez.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section className="mb-8">
-                <h3 className="flex items-center gap-2 text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100">
-                    <span className="material-symbols-outlined text-primary">settings_applications</span>
-                    3. Gestión de Cookies
-                </h3>
-                <p>
-                    Dado que solo utilizamos cookies clasificadas como "estrictamente necesarias" por la normativa europea (LSSI), no requerimos un banner de consentimiento previo.
-                </p>
-                <p className="mt-2">
-                    Si desea, puede bloquear estas cookies desde la configuración de su navegador, pero le advertimos que <strong>la aplicación dejará de funcionar correctamente</strong> (no podrá iniciar sesión).
-                </p>
-            </section>
-        </LegalPageLayout>
-    );
+      <section>
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="material-symbols-outlined text-primary">shield</span>
+          {t('cookies_section_browser')}
+        </h3>
+        <p>{t('cookies_browser_body')}</p>
+      </section>
+    </LegalPageLayout>
+  );
 };
 
 export default CookiesPolicy;

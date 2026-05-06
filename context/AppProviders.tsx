@@ -1,5 +1,8 @@
 import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { legalTranslations } from '../content/legalTranslations';
+import { CookieConsentProvider } from './CookieConsentContext';
+import { NotificationProvider } from './NotificationContext';
 
 // --- TRANSLATIONS ---
 const translations = {
@@ -320,7 +323,7 @@ const translations = {
     'landing_free_badge': 'Free forever',
     'landing_free_title': 'No credit card. No limits. No tricks.',
     'landing_free_subtitle': 'Time Tracker is completely free. Start as a guest or create an account when you want your data synced across devices.',
-    'landing_free_cta': 'Create free account',
+    'landing_free_cta': 'Get started for free',
     'landing_footer_cookies': 'Cookies',
     'landing_footer_copy': 'All rights reserved.',
     // Desktop-specific
@@ -349,6 +352,7 @@ const translations = {
     'total_logged_days': 'Days Logged',
     'no_activity_heatmap': 'No activity recorded yet.',
     'avg_active_day': 'Avg / active day',
+    ...legalTranslations.en,
   },
   es: {
     // General
@@ -671,7 +675,7 @@ const translations = {
     'landing_free_badge': 'Gratis para siempre',
     'landing_free_title': 'Sin tarjeta. Sin límites. Sin trampa.',
     'landing_free_subtitle': 'Time Tracker es completamente gratuito. Empieza como invitado o crea una cuenta cuando quieras sincronizar tus datos entre dispositivos.',
-    'landing_free_cta': 'Crear cuenta gratuita',
+    'landing_free_cta': 'Empezar gratis',
     'landing_footer_cookies': 'Cookies',
     'landing_footer_copy': 'Todos los derechos reservados.',
     // Desktop-specific
@@ -700,6 +704,7 @@ const translations = {
     'total_logged_days': 'Días registrados',
     'no_activity_heatmap': 'Aún no hay actividad registrada.',
     'avg_active_day': 'Media / día activo',
+    ...legalTranslations.es,
   },
 };
 
@@ -818,19 +823,18 @@ export const useDateFormat = () => {
   return context;
 };
 
-// --- COMBINED PROVIDER ---
-import { NotificationProvider } from './NotificationContext';
-
 export const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <LocalizationProvider>
-      <DateFormatProvider>
-        <ThemeProvider>
-          <NotificationProvider>
-            {children}
-          </NotificationProvider>
-        </ThemeProvider>
-      </DateFormatProvider>
+      <CookieConsentProvider>
+        <DateFormatProvider>
+          <ThemeProvider>
+            <NotificationProvider>
+              {children}
+            </NotificationProvider>
+          </ThemeProvider>
+        </DateFormatProvider>
+      </CookieConsentProvider>
     </LocalizationProvider>
   );
 };

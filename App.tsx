@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import type { Space, TimeEntry } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { RouteSeo } from './components/RouteSeo';
+import { CookieBanner } from './components/CookieBanner';
 import { FullscreenLoader } from './components/LoadingFallback';
 import { useDeferredAuthStatus } from './hooks/useDeferredAuthStatus';
 
@@ -81,6 +82,7 @@ const App: React.FC = () => {
           )}
         />
       </Routes>
+      <CookieBanner />
     </BrowserRouter>
   );
 };

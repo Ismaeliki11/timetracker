@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTheme, useLocalization } from '../context/AppProviders';
 import { useAuth } from '../context/AuthContext';
+import { useCookieConsent } from '../context/CookieConsentContext';
 import { useNavigate, Link } from 'react-router-dom';
 
 export const Header: React.FC<{ onInfoClick: () => void, onProfileClick: () => void, isSyncing?: boolean, onSyncClick?: () => void }> = ({ onInfoClick, onProfileClick, isSyncing, onSyncClick }) => {
@@ -75,6 +76,7 @@ export const Header: React.FC<{ onInfoClick: () => void, onProfileClick: () => v
 
 export const InfoPanel: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
     const { language, setLanguage, t } = useLocalization();
+    const { openCookieSettings } = useCookieConsent();
 
     if (!isOpen) return null;
 
@@ -104,15 +106,24 @@ export const InfoPanel: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                 </div>
 
                 <div className="border-t border-slate-200 dark:border-slate-700 mt-6 pt-4 flex flex-col gap-2 text-center">
-                    <p className="text-xs text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wider mb-2">Legal</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wider mb-2">{t('legal_heading')}</p>
                     <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
-                        <Link to="/privacy" className="hover:text-primary hover:underline" onClick={onClose}>Privacy</Link>
-                        <Link to="/terms" className="hover:text-primary hover:underline" onClick={onClose}>Terms</Link>
-                        <Link to="/cookies" className="hover:text-primary hover:underline" onClick={onClose}>Cookies</Link>
+                        <Link to="/privacy" className="hover:text-primary hover:underline" onClick={onClose}>{t('auth_privacy_policy')}</Link>
+                        <Link to="/terms" className="hover:text-primary hover:underline" onClick={onClose}>{t('auth_terms_of_service')}</Link>
+                        <Link to="/cookies" className="hover:text-primary hover:underline" onClick={onClose}>{t('landing_footer_cookies')}</Link>
+                        <button
+                            type="button"
+                            className="hover:text-primary hover:underline"
+                            onClick={() => {
+                                onClose();
+                                openCookieSettings();
+                            }}
+                        >
+                            {t('cookie_settings')}
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-
