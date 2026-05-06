@@ -11,6 +11,7 @@ interface CalendarViewProps {
     onDeleteEntry: (entryId: string) => void;
     onViewDetails: (entry: TimeEntry) => void;
     onGoToStatistics: () => void;
+    onOpenLabels: () => void;
 }
 
 const formatDurationFromHours = (hours: number): string => {
@@ -23,7 +24,7 @@ const formatDurationFromHours = (hours: number): string => {
     return `${h}:${String(m).padStart(2, '0')}`;
 };
 
-const CalendarView: React.FC<CalendarViewProps> = ({ space, entries, onGoBack, onLogTime, onEditEntry, onDeleteEntry, onViewDetails, onGoToStatistics }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ space, entries, onGoBack, onLogTime, onEditEntry, onDeleteEntry, onViewDetails, onGoToStatistics, onOpenLabels }) => {
     const { t, locale } = useLocalization();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -80,9 +81,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({ space, entries, onGoBack, o
                     </div>
                     <h1 className="text-lg font-bold text-black dark:text-slate-100 truncate">{space.name}</h1>
                 </div>
-                <button onClick={onGoToStatistics} className="flex items-center justify-center rounded-full h-12 w-12 text-slate-900 dark:text-slate-200 glass-interactive">
-                    <span className="material-symbols-outlined">bar_chart</span>
-                </button>
+                <div className="flex items-center gap-1">
+                    <button onClick={onOpenLabels} className="flex items-center justify-center rounded-full h-12 w-12 text-slate-900 dark:text-slate-200 glass-interactive" aria-label={t('labels')}>
+                        <span className="material-symbols-outlined">label</span>
+                    </button>
+                    <button onClick={onGoToStatistics} className="flex items-center justify-center rounded-full h-12 w-12 text-slate-900 dark:text-slate-200 glass-interactive">
+                        <span className="material-symbols-outlined">bar_chart</span>
+                    </button>
+                </div>
             </header>
             <main className="flex-1 px-4 pt-4 overflow-y-auto scrollable-content">
                 <div className="flex items-center justify-between mb-4">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
   <!-- Google tag (gtag.js) -->
@@ -20,40 +20,40 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Time Tracker | App gratis para registrar horas y controlar tu tiempo</title>
-  <meta name="description" content="Time Tracker es una app gratis para registrar horas, controlar tiempo por proyecto, revisar calendario y consultar estadísticas. Ideal para freelancers, estudiantes y trabajo personal." />
+  <title>Time Tracker | Free app to track time, log hours and view stats</title>
+  <meta name="description" content="Time Tracker is a free app to track time, log work hours, review a calendar view, and check clear statistics. Built for freelancers, students, and focused personal projects." />
   <meta name="author" content="Time Tracker" />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#ffffff" />
-  <link rel="canonical" href="https://time-tracker-ismaeliki.vercel.app/" />
+  <link rel="canonical" href="https://time-tracker-ismaeliki.vercel.app/en" />
   <link rel="alternate" hreflang="es" href="https://time-tracker-ismaeliki.vercel.app/" />
   <link rel="alternate" hreflang="en" href="https://time-tracker-ismaeliki.vercel.app/en" />
   <link rel="alternate" hreflang="x-default" href="https://time-tracker-ismaeliki.vercel.app/" />
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Time Tracker | App gratis para registrar horas y controlar tu tiempo" />
-  <meta property="og:description" content="App gratis para registrar horas, revisar calendario y consultar estadísticas claras. Pensada para freelancers, estudiantes y proyectos personales." />
+  <meta property="og:title" content="Time Tracker | Free app to track time, log hours and view stats" />
+  <meta property="og:description" content="Free app to track time, review a calendar view, and check clear statistics for work, study, and personal projects." />
   <meta property="og:site_name" content="Time Tracker" />
-  <meta property="og:url" content="https://time-tracker-ismaeliki.vercel.app/" />
+  <meta property="og:url" content="https://time-tracker-ismaeliki.vercel.app/en" />
   <meta property="og:image" content="https://time-tracker-ismaeliki.vercel.app/seo-card.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Vista previa del landing de Time Tracker" />
-  <meta property="og:locale" content="es_ES" />
-  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:image:alt" content="Time Tracker landing preview" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="es_ES" />
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Time Tracker | App gratis para registrar horas y controlar tu tiempo" />
-  <meta name="twitter:description" content="App gratis para registrar horas, revisar calendario y consultar estadísticas claras." />
+  <meta name="twitter:title" content="Time Tracker | Free app to track time, log hours and view stats" />
+  <meta name="twitter:description" content="Free app to track time, review a calendar view, and check clear statistics." />
   <meta name="twitter:image" content="https://time-tracker-ismaeliki.vercel.app/seo-card.png" />
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Time Tracker",
-      "url": "https://time-tracker-ismaeliki.vercel.app/",
-      "inLanguage": "es",
-      "description": "Time Tracker es una app gratis para registrar horas, controlar tiempo por proyecto, revisar calendario y consultar estadísticas."
+      "url": "https://time-tracker-ismaeliki.vercel.app/en",
+      "inLanguage": "en",
+      "description": "Time Tracker is a free app to track time, log work hours, review a calendar view, and check clear statistics."
     }
   </script>
   <script type="application/ld+json">
@@ -69,14 +69,14 @@
         "price": "0",
         "priceCurrency": "EUR"
       },
-      "inLanguage": "es",
-      "url": "https://time-tracker-ismaeliki.vercel.app/",
-      "description": "App gratis para registrar horas, revisar calendario y consultar estadísticas claras.",
+      "inLanguage": "en",
+      "url": "https://time-tracker-ismaeliki.vercel.app/en",
+      "description": "Free app to track time, review a calendar view, and check clear statistics.",
       "featureList": [
-        "Registro de horas por proyecto, cliente o actividad",
-        "Vista de calendario para revisar y editar entradas",
-        "Estadísticas claras y calculadora de ganancias",
-        "Uso sencillo en escritorio y móvil"
+        "Time logging by project, client, or activity",
+        "Calendar view to review and edit entries",
+        "Clear statistics and an earnings calculator",
+        "Simple experience on desktop and mobile"
       ]
     }
   </script>
@@ -94,10 +94,7 @@
   <link rel="shortcut icon" href="/light/favicon.ico" media="(prefers-color-scheme: light)">
   <link rel="shortcut icon" href="/dark/favicon.ico" media="(prefers-color-scheme: dark)">
 
-  <!-- Apple Touch Icon (Defaults to Light, as iOS doesn't support dynamic apple-touch-icon well) -->
   <link rel="apple-touch-icon" sizes="180x180" href="/light/apple-touch-icon.png">
-
-  <!-- Manifest -->
   <link rel="manifest" href="/site.webmanifest">
   <script>
     tailwind.config = {
@@ -123,15 +120,12 @@
     body {
       font-family: 'Inter', sans-serif;
       overscroll-behavior-y: none;
-      /* Prevent pull-to-refresh on mobile which can feel glitchy in apps */
       touch-action: manipulation;
-      /* Improves touch response by disabling double-tap zoom */
       margin: 0;
       padding: 0;
       background-color: transparent;
     }
 
-    /* This enables momentum-based scrolling on iOS. */
     .scrollable-content {
       -webkit-overflow-scrolling: touch;
     }
@@ -144,14 +138,12 @@
       height: 100%;
       z-index: -1;
       background-color: #f0f2f5;
-      /* Lighter base for light mode */
       background-image: radial-gradient(circle at top left, #ffffff, #e9ecef);
       transition: background 0.5s ease;
     }
 
     .dark #professional-bg {
       background-color: #121212;
-      /* Deeper black for dark mode */
       background-image: radial-gradient(circle at top left, #1a1a1a, #000000);
     }
 
@@ -163,7 +155,6 @@
         'opsz' 24
     }
 
-    /* Custom Scrollbar Styles */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -190,9 +181,6 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
-    /* --- HYBRID UI STYLES --- */
-
-    /* Light Mode: Solid & Professional */
     .glass-pane {
       background-color: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
@@ -212,9 +200,8 @@
       transform: translateY(-1px);
     }
 
-    /* Dark Mode: Liquid Glass Effect */
     .dark .glass-pane {
-      background-color: rgba(20, 22, 25, 0.5); /* Lower opacity for real glass feel */
+      background-color: rgba(20, 22, 25, 0.5);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -223,7 +210,6 @@
 
     .dark .glass-interactive {
       background-color: rgba(42, 45, 49, 0.7);
-      /* #2a2d31 with alpha */
       border: 1px solid transparent;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -231,19 +217,15 @@
 
     .dark .glass-interactive:hover {
       background-color: rgba(55, 58, 64, 0.8);
-      /* #373a40 with alpha */
       transform: translateY(-1px);
     }
 
-    /* --- iOS/Mobile Input Fixes --- */
     input[type="time"],
     input[type="date"] {
       -webkit-appearance: none;
       appearance: none;
       min-height: 3.5rem;
-      /* Ensure correct height */
       background-color: #f1f5f9;
-      /* Match slate-100 */
       color: #0f172a;
       border-radius: 0.5rem;
       padding: 0 1rem;
@@ -252,19 +234,14 @@
     .dark input[type="time"],
     .dark input[type="date"] {
       background-color: #1e293b;
-      /* Match slate-800 */
       color: #f8fafc;
       color-scheme: dark;
-      /* Forces native picker to be dark */
     }
 
-    /* Align text centered or left as needed */
     input[type="time"] {
       text-align: center;
     }
   </style>
-
-
 </head>
 
 <body>

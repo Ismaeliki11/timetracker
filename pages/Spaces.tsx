@@ -79,9 +79,17 @@ const Spaces: React.FC<SpacesScreenProps> = ({ spaces, timeEntries, onSelectSpac
         }
     };
 
+    const getFontSizeClass = (text: string) => {
+        if (text.length > 80) return 'text-xl';
+        if (text.length > 50) return 'text-2xl';
+        return 'text-3xl';
+    };
+
     return (
         <main className="flex-1 px-4 pt-4">
-            <h1 className="tracking-tight text-3xl font-bold pt-6 pb-2 text-black dark:text-white">{welcomeMessage}</h1>
+            <h1 className={`tracking-tight ${getFontSizeClass(welcomeMessage)} font-bold pt-6 pb-2 text-black dark:text-white transition-all duration-300`}>
+                {welcomeMessage}
+            </h1>
             <p className="text-slate-600 dark:text-gray-300 text-base font-normal pb-3 pt-1">{t('select_space_prompt')}</p>
 
             {ongoingEntries.length > 0 && (

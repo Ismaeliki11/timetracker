@@ -17,8 +17,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const [toasts, setToasts] = useState<Notification[]>([]);
 
     const notify = useCallback((message: string, type: ToastType) => {
-        const id = Date.now().toString() + Math.random();
-        setToasts(prev => [...prev, { id, message, type }]);
+        const id = Date.now().toString();
+        // Replace any existing toast with the same message+type instead of stacking
+        setToasts(prev => {
+            const filtered = prev.filter(t => !(t.message === message && t.type === type));
+            return [...filtered, { id, message, type }];
+        });
     }, []);
 
     const removeToast = useCallback((id: string) => {

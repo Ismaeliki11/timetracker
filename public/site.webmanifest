@@ -1,6 +1,8 @@
 {
-    "name": "Rastreador de Tiempo",
+    "name": "Time Tracker",
     "short_name": "TimeTracker",
+    "description": "Free app to track time, log hours, and review clear statistics.",
+    "lang": "en",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",

@@ -21,6 +21,8 @@ export const useDataSync = (
 
     // Track if we have performed the initial sync on mount/login
     const hasInitialSynced = useRef(false);
+    // Ref-based lock to prevent race conditions between concurrent sync triggers
+    const isSyncingRef = useRef(false);
 
     const getKnownIds = useCallback((key: string): Set<string> => {
         try {
@@ -36,8 +38,9 @@ export const useDataSync = (
     }, []);
 
     const syncNow = useCallback(async () => {
-        if (!user || isSyncing) return;
+        if (!user || isSyncingRef.current) return;
 
+        isSyncingRef.current = true;
         setIsSyncing(true);
         console.log("[Sync] Starting Cloud Sync...");
 
@@ -128,40 +131,43 @@ export const useDataSync = (
             console.error("[Sync] Error:", error);
             notify(t('error_sync_failed'), 'error');
         } finally {
+            isSyncingRef.current = false;
             setIsSyncing(false);
         }
-    }, [user, isSyncing, localSpaces, localEntries, setLocalSpaces, setLocalEntries, notify, t, saveKnownIds, getKnownIds]);
+    }, [user, localSpaces, localEntries, setLocalSpaces, setLocalEntries, notify, t, saveKnownIds, getKnownIds]);
 
-    // Initial Sync on Mount/Login + Focus/Interval
+    // Hold a stable ref to syncNow so the effect doesn't re-run when the callback identity changes
+    const syncNowRef = useRef(syncNow);
+    syncNowRef.current = syncNow;
+
+    // Initial Sync on Mount/Login + Visibility/Interval
     useEffect(() => {
         if (user && !hasInitialSynced.current) {
             hasInitialSynced.current = true;
-            syncNow();
+            syncNowRef.current();
         } else if (!user) {
             hasInitialSynced.current = false;
         }
 
-        // Auto-sync on Tab Focus (Multi-device interoperability)
+        // Auto-sync when tab becomes visible again (covers both alt-tab and browser-tab focus)
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'visible' && user) {
-                syncNow();
+                syncNowRef.current();
             }
         };
 
         // Periodic Sync Every 5 Minutes
         const interval = setInterval(() => {
-            if (user) syncNow();
+            if (user) syncNowRef.current();
         }, 5 * 60 * 1000);
 
-        window.addEventListener('visibilitychange', handleVisibilityChange);
-        window.addEventListener('focus', handleVisibilityChange);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
-            window.removeEventListener('visibilitychange', handleVisibilityChange);
-            window.removeEventListener('focus', handleVisibilityChange);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
             clearInterval(interval);
         };
-    }, [user, syncNow]);
+    }, [user]);
 
     return { isSyncing, syncNow };
 };

@@ -19,11 +19,13 @@ export const getWelcomeMessageKey = (isGuest: boolean): string => {
         const list = guestKeys[timeOfDay as keyof typeof guestKeys] || guestKeys.default;
         return list[Math.floor(Math.random() * list.length)];
     } else {
+        const winningPhrases = Array.from({ length: 20 }, (_, i) => `motivational_winning_${i + 1}`);
+        
         const userKeys = {
-            morning: ['motivational_morning_1', 'motivational_morning_2', 'motivational_morning_3'],
-            afternoon: ['motivational_afternoon_1', 'motivational_afternoon_2', 'motivational_afternoon_3'],
-            evening: ['motivational_evening_1', 'motivational_evening_2', 'motivational_evening_3'],
-            default: ['motivational_default_1', 'motivational_default_2']
+            morning: ['motivational_morning_1', 'motivational_morning_2', 'motivational_morning_3', ...winningPhrases],
+            afternoon: ['motivational_afternoon_1', 'motivational_afternoon_2', 'motivational_afternoon_3', ...winningPhrases],
+            evening: ['motivational_evening_1', 'motivational_evening_2', 'motivational_evening_3', ...winningPhrases],
+            default: ['motivational_default_1', 'motivational_default_2', ...winningPhrases]
         };
         const list = userKeys[timeOfDay as keyof typeof userKeys] || userKeys.default;
         return list[Math.floor(Math.random() * list.length)];

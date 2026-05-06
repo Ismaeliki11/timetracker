@@ -1,9 +1,20 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import type { Space, TimeEntry } from '../types';
 import { useLocalization } from '../context/AppProviders';
 import { generateInsight, InsightResult } from '../utils/insightEngine';
 import FinancialCalculatorModal from './FinancialCalculatorModal';
 import StatisticsInfoPanel from './StatisticsInfoPanel';
+
+const toDateStrMobile = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+const getHeatClassMobile = (hours: number) => {
+  if (hours === 0) return 'bg-slate-100 dark:bg-slate-700/60';
+  if (hours < 1) return 'bg-emerald-200 dark:bg-emerald-900';
+  if (hours < 2) return 'bg-emerald-300 dark:bg-emerald-700';
+  if (hours < 4) return 'bg-emerald-400 dark:bg-emerald-600';
+  return 'bg-emerald-500 dark:bg-emerald-500';
+};
 
 interface StatisticsViewProps {
     space: Space;
@@ -223,6 +234,48 @@ const StatisticsView: React.FC<StatisticsViewProps> = ({ space, entries, onGoBac
         };
     }, [entries, range, anchorDate, customStart, customEnd, t, locale]);
 
+    // ─── Compact heatmap (20 weeks) ─────────────────────────────────────────────
+    const compactHeatmap = useMemo(() => {
+        const active = entries.filter(e => !e.isOngoing);
+        const hoursMap: Record<string, number> = {};
+        active.forEach(e => { hoursMap[e.date] = (hoursMap[e.date] || 0) + e.duration; });
+
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const weeksCount = 20;
+
+        const heatStart = new Date(today);
+        heatStart.setDate(today.getDate() - weeksCount * 7);
+        const startDow = heatStart.getDay();
+        heatStart.setDate(heatStart.getDate() - (startDow === 0 ? 6 : startDow - 1));
+
+        const weeks: Array<Array<{ date: string; hours: number; isFuture: boolean }>> = [];
+        const cursor = new Date(heatStart);
+        while (cursor <= today) {
+            const week = [];
+            for (let d = 0; d < 7; d++) {
+                const dateStr = toDateStrMobile(cursor);
+                week.push({ date: dateStr, hours: hoursMap[dateStr] || 0, isFuture: new Date(cursor) > today });
+                cursor.setDate(cursor.getDate() + 1);
+            }
+            weeks.push(week);
+        }
+
+        const monthLabels: Array<{ label: string; weekIdx: number }> = [];
+        let lastMonth = -1;
+        weeks.forEach((week, wi) => {
+            const first = week.find(c => !c.isFuture);
+            if (first) {
+                const m = new Date(first.date + 'T12:00:00').getMonth();
+                if (m !== lastMonth) {
+                    monthLabels.push({ label: new Date(first.date + 'T12:00:00').toLocaleDateString(locale, { month: 'short' }), weekIdx: wi });
+                    lastMonth = m;
+                }
+            }
+        });
+
+        return { weeks, monthLabels };
+    }, [entries, locale]);
+
     const handleNavigate = (direction: 'prev' | 'next') => {
         if (range === 'custom') return; // No nav for custom
         const newDate = new Date(anchorDate);
@@ -338,7 +391,52 @@ const StatisticsView: React.FC<StatisticsViewProps> = ({ space, entries, onGoBac
                     </div>
                 )}
 
-                {/* 3. Interactive Chart */}
+                {/* 3. Compact Heatmap */}
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-100 dark:border-slate-700">
+                    <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span className="material-symbols-outlined text-emerald-500 text-base">grid_view</span>
+                            {t('activity_heatmap')}
+                        </h4>
+                        <span className="text-[10px] text-slate-400">20w</span>
+                    </div>
+                    <div className="overflow-x-auto">
+                        {/* Month labels */}
+                        <div className="flex mb-1" style={{ gap: '1px' }}>
+                            {compactHeatmap.weeks.map((_, wi) => {
+                                const label = compactHeatmap.monthLabels.find(m => m.weekIdx === wi);
+                                return (
+                                    <div key={wi} style={{ width: '9px', flexShrink: 0 }}>
+                                        {label && <span className="text-[8px] text-slate-400 whitespace-nowrap">{label.label}</span>}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        {/* Grid */}
+                        <div className="flex" style={{ gap: '1px' }}>
+                            {compactHeatmap.weeks.map((week, wi) => (
+                                <div key={wi} className="flex flex-col" style={{ gap: '1px' }}>
+                                    {week.map((cell, di) => (
+                                        <div key={di}
+                                            className={`rounded-sm ${cell.isFuture ? 'opacity-0' : getHeatClassMobile(cell.hours)}`}
+                                            style={{ width: '9px', height: '9px', flexShrink: 0 }}
+                                        />
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                        {/* Legend */}
+                        <div className="flex items-center gap-1 mt-2 justify-end">
+                            <span className="text-[8px] text-slate-400">Less</span>
+                            {['bg-slate-100 dark:bg-slate-700/60', 'bg-emerald-200 dark:bg-emerald-900', 'bg-emerald-300 dark:bg-emerald-700', 'bg-emerald-400 dark:bg-emerald-600', 'bg-emerald-500'].map((cls, i) => (
+                                <div key={i} className={`rounded-sm ${cls}`} style={{ width: '9px', height: '9px' }} />
+                            ))}
+                            <span className="text-[8px] text-slate-400">More</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 4. Interactive Chart */}
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-100 dark:border-slate-700">
                     <div className="flex items-center justify-between mb-4">
                         <h4 className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
@@ -373,7 +471,7 @@ const StatisticsView: React.FC<StatisticsViewProps> = ({ space, entries, onGoBac
                     </div>
                 </div>
 
-                {/* 4. Top Activities with Percentages */}
+                {/* 5. Top Activities with Percentages */}
                 <div>
                     <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <span className="material-symbols-outlined text-green-500 text-lg">pie_chart</span>
@@ -404,7 +502,7 @@ const StatisticsView: React.FC<StatisticsViewProps> = ({ space, entries, onGoBac
                     </div>
                 </div>
 
-                {/* 5. Financial Calculator Button */}
+                {/* 6. Financial Calculator Button */}
                 <button
                     onClick={handleOpenCalculator}
                     className="w-full py-4 mt-4 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 shadow-sm transition-all"

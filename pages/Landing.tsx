@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLocalization } from '../context/AppProviders';
 import { useAuth } from '../context/AuthContext';
 
-const MockAppPreview: React.FC = () => (
+const MockAppPreview: React.FC<{ t: (key: string) => string }> = ({ t }) => (
   <div className="mx-auto w-64 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 select-none pointer-events-none">
     <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
       <div className="flex items-center gap-1.5">
@@ -16,22 +16,22 @@ const MockAppPreview: React.FC = () => (
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-blue-500 rounded-xl p-2.5 text-white">
           <span className="material-symbols-outlined block mb-1" style={{ fontSize: '16px' }}>code</span>
-          <div className="text-xs font-bold leading-tight">Dev Project</div>
+          <div className="text-xs font-bold leading-tight">{t('landing_preview_space_1')}</div>
           <div className="text-xs opacity-70 mt-0.5">28.3h</div>
         </div>
         <div className="bg-purple-500 rounded-xl p-2.5 text-white">
           <span className="material-symbols-outlined block mb-1" style={{ fontSize: '16px' }}>palette</span>
-          <div className="text-xs font-bold leading-tight">Design</div>
+          <div className="text-xs font-bold leading-tight">{t('landing_preview_space_2')}</div>
           <div className="text-xs opacity-70 mt-0.5">12.5h</div>
         </div>
       </div>
       <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Today</div>
+        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t('today_label')}</div>
         <div className="space-y-2">
           {[
-            { color: 'bg-blue-500', label: 'UI Review', time: '2:30h', live: false },
-            { color: 'bg-purple-500', label: 'Client call', time: '1:00h', live: false },
-            { color: 'bg-blue-500', label: 'Code review', time: 'Live', live: true },
+            { color: 'bg-blue-500', label: t('landing_preview_item_1'), time: '2:30h', live: false },
+            { color: 'bg-purple-500', label: t('landing_preview_item_2'), time: '1:00h', live: false },
+            { color: 'bg-blue-500', label: t('landing_preview_item_3'), time: t('landing_preview_live'), live: true },
           ].map((entry, i) => (
             <div key={i} className="flex items-center gap-2">
               <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${entry.color}`} />
@@ -42,7 +42,7 @@ const MockAppPreview: React.FC = () => (
         </div>
       </div>
       <div className="bg-primary/10 rounded-xl p-3">
-        <div className="text-xs font-semibold text-primary mb-2">This week · 41.8h</div>
+        <div className="text-xs font-semibold text-primary mb-2">{t('this_week_label')} · 41.8h</div>
         <div className="flex items-end gap-1 h-8">
           {[50, 75, 40, 90, 60, 30, 0].map((h, i) => (
             <div
@@ -57,10 +57,20 @@ const MockAppPreview: React.FC = () => (
   </div>
 );
 
-const Landing: React.FC = () => {
+interface LandingProps {
+  preferredLanguage: 'en' | 'es';
+}
+
+const Landing: React.FC<LandingProps> = ({ preferredLanguage }) => {
   const { t, language, setLanguage } = useLocalization();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useLayoutEffect(() => {
+    if (language !== preferredLanguage) {
+      setLanguage(preferredLanguage);
+    }
+  }, [language, preferredLanguage, setLanguage]);
 
   const features = [
     { icon: 'folder_open', titleKey: 'landing_feat1_title', descKey: 'landing_feat1_desc' },
@@ -75,6 +85,13 @@ const Landing: React.FC = () => {
     { num: '03', titleKey: 'landing_step3_title', descKey: 'landing_step3_desc' },
   ];
 
+  const useCases = [
+    t('landing_use_case_1'),
+    t('landing_use_case_2'),
+    t('landing_use_case_3'),
+    t('landing_use_case_4'),
+  ];
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
 
@@ -87,40 +104,40 @@ const Landing: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button
-              onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
+              onClick={() => navigate(preferredLanguage === 'en' ? '/' : '/en')}
               className="text-sm font-semibold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
               aria-label="Toggle language"
             >
               {language === 'en' ? 'ES' : 'EN'}
             </button>
             {user ? (
-              <button
-                onClick={() => navigate('/spaces')}
+              <Link
+                to="/spaces"
                 className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
               >
                 {t('landing_nav_app')}
-              </button>
+              </Link>
             ) : (
               <>
-                <button
-                  onClick={() => navigate('/login')}
+                <Link
+                  to="/login"
                   className="hidden sm:block text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   {t('auth_sign_in')}
-                </button>
-                <button
-                  onClick={() => navigate('/register')}
+                </Link>
+                <Link
+                  to="/register"
                   className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors whitespace-nowrap"
                 >
                   {t('landing_cta_primary')}
-                </button>
+                </Link>
               </>
             )}
           </div>
         </nav>
       </header>
 
-      <main>
+      <main id="main-content">
 
         {/* HERO */}
         <section className="relative overflow-hidden">
@@ -142,19 +159,32 @@ const Landing: React.FC = () => {
                 <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-lg leading-relaxed">
                   {t('landing_hero_subtitle')}
                 </p>
+                <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-8 max-w-2xl leading-relaxed">
+                  {t('landing_hero_supporting')}
+                </p>
                 <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={() => navigate('/register')}
+                  <Link
+                    to="/register"
                     className="bg-primary text-white font-bold px-6 py-3.5 rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 text-base"
                   >
                     {t('landing_cta_primary')} →
-                  </button>
-                  <button
-                    onClick={() => navigate('/login')}
+                  </Link>
+                  <Link
+                    to="/login"
                     className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-semibold px-6 py-3.5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all text-base"
                   >
                     {t('auth_sign_in')}
-                  </button>
+                  </Link>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-5">
+                  {useCases.map((useCase) => (
+                    <span
+                      key={useCase}
+                      className="inline-flex items-center rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300"
+                    >
+                      {useCase}
+                    </span>
+                  ))}
                 </div>
               </div>
               <div className="flex justify-center lg:justify-end">
@@ -163,7 +193,7 @@ const Landing: React.FC = () => {
                     className="absolute inset-0 bg-primary/20 rounded-3xl blur-3xl scale-75 translate-y-4 pointer-events-none"
                     aria-hidden="true"
                   />
-                  <MockAppPreview />
+                  <MockAppPreview t={t} />
                 </div>
               </div>
             </div>
@@ -257,12 +287,12 @@ const Landing: React.FC = () => {
             <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
               {t('landing_free_subtitle')}
             </p>
-            <button
-              onClick={() => navigate('/register')}
+            <Link
+              to="/register"
               className="bg-white text-primary font-black px-8 py-4 rounded-xl hover:bg-gray-50 transition-all text-lg shadow-xl"
             >
               {t('landing_free_cta')} →
-            </button>
+            </Link>
           </div>
         </section>
 

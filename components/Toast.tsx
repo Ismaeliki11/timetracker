@@ -38,23 +38,17 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
 
     return (
         <div className={`pointer-events-auto flex w-full max-w-md overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 transition-all animate-slide-up ${bgClass}`}>
-            <div className="p-4 flex items-start">
-                <div className="flex-shrink-0">
-                    <span className="material-symbols-outlined">{icon}</span>
-                </div>
-                <div className="ml-3 flex-1 min-w-0">
-                    <p className="text-sm font-medium leading-5 break-words">{message}</p>
-                </div>
-                <div className="ml-4 flex flex-shrink-0">
-                    <button
-                        type="button"
-                        className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-white/20"
-                        onClick={onClose}
-                    >
-                        <span className="sr-only">Close</span>
-                        <span className="material-symbols-outlined text-sm">close</span>
-                    </button>
-                </div>
+            <div className="px-4 py-3 flex items-center gap-3 w-full">
+                <span className="material-symbols-outlined flex-shrink-0 text-xl leading-none">{icon}</span>
+                <p className="flex-1 text-sm font-medium leading-snug break-words">{message}</p>
+                <button
+                    type="button"
+                    className="flex-shrink-0 inline-flex items-center justify-center rounded-md p-1 focus:outline-none hover:bg-white/20"
+                    onClick={onClose}
+                >
+                    <span className="sr-only">Close</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: '18px', lineHeight: 1 }}>close</span>
+                </button>
             </div>
             <style>{`
                 @keyframes slide-up {
